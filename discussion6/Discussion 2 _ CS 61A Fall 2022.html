@@ -1,0 +1,2049 @@
+<!DOCTYPE html>
+<!-- saved from url=(0034)https://cs61a.org/disc/sol-disc02/ -->
+<html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta name="description" content="CS 61A: Structure and Interpretation of Computer Programs">
+    <meta name="keywords" content="CS 61A, Computer Science, CS, 61A, Programming, John DeNero, Berkeley, EECS">
+    <meta name="author" content="John DeNero, Justin Yokota">
+    
+    <meta name="viewport" content="width=device-width">
+
+    <script src="./Discussion 2 _ CS 61A Fall 2022_files/jquery.min.js.下载"></script>
+    <script src="./Discussion 2 _ CS 61A Fall 2022_files/jquery.ba-throttle-debounce.min.js.下载"></script>
+    <script src="./Discussion 2 _ CS 61A Fall 2022_files/bootstrap.min.js.下载"></script>
+    <script src="./Discussion 2 _ CS 61A Fall 2022_files/released_assets_js_hl.js.下载"></script>
+    <script src="./Discussion 2 _ CS 61A Fall 2022_files/released_assets_js_toggledarkmode.js.下载"></script>
+    <script>
+        // we aren't registering builtins since
+        //      (1) they don't render differently in the current CSS from other names
+        //      (2) it's a mess to list all of them. You can extract from the site but that takes effort
+        // if (1) ceases to be true, (2) might be worth the effort. For now, we're leaving as is
+        hljsRegister({
+            'keyword': "define if cond and or let begin lambda mu quote delay cons-stream set! quasiquote unquote unquote-splicing define-macro"
+        });
+        hljs.initHighlightingOnLoad();
+    </script>
+    <script src="./Discussion 2 _ CS 61A Fall 2022_files/released_assets_js_dark-mode.js.下载"></script>
+    <link rel="stylesheet" href="./Discussion 2 _ CS 61A Fall 2022_files/bootstrap.min.css">
+    <link rel="stylesheet" href="./Discussion 2 _ CS 61A Fall 2022_files/css">
+    <link rel="stylesheet" href="./Discussion 2 _ CS 61A Fall 2022_files/released_assets_css_style.css">
+    <link rel="stylesheet" href="./Discussion 2 _ CS 61A Fall 2022_files/released_assets_css_mono-blue.css">
+    <link rel="icon" href="https://cs61a.org/assets/images/favicon.ico">
+
+    
+
+<link rel="stylesheet" type="text/css" href="./Discussion 2 _ CS 61A Fall 2022_files/released_assets_css_disc.css">
+
+
+    <title>
+Discussion 2 | CS 61A Fall 2022
+</title>
+  <script async="async" type="text/javascript" src="./Discussion 2 _ CS 61A Fall 2022_files/editor.main.js.下载"></script><script async="async" type="text/javascript" src="./Discussion 2 _ CS 61A Fall 2022_files/editor.main.nls.js.下载"></script><style type="text/css" media="screen" class="monaco-colors">.monaco-editor .minimap-slider, .monaco-editor .minimap-slider .minimap-slider-horizontal { background: rgba(121, 121, 121, 0.2); }
+.monaco-editor .minimap-slider:hover, .monaco-editor .minimap-slider:hover .minimap-slider-horizontal { background: rgba(100, 100, 100, 0.35); }
+.monaco-editor .minimap-slider.active, .monaco-editor .minimap-slider.active .minimap-slider-horizontal { background: rgba(191, 191, 191, 0.2); }
+.monaco-editor .minimap-shadow-visible { box-shadow: #000000 -6px 0 6px -6px inset; }
+.monaco-editor .scroll-decoration { box-shadow: #000000 0 6px 6px -6px inset; }
+.monaco-editor .focused .selected-text { background-color: #264f78; }
+.monaco-editor .selected-text { background-color: #3a3d41; }
+.monaco-editor, .monaco-editor-background, .monaco-editor .inputarea.ime-input { background-color: #1e1e1e; }
+.monaco-editor, .monaco-editor .inputarea.ime-input { color: #d4d4d4; }
+.monaco-editor .margin { background-color: #1e1e1e; }
+.monaco-editor .rangeHighlight { background-color: rgba(255, 255, 255, 0.04); }
+.monaco-editor .symbolHighlight { background-color: rgba(234, 92, 0, 0.33); }
+.vs-whitespace { color: rgba(227, 228, 226, 0.16) !important; }
+.monaco-editor .view-overlays .current-line { border: 2px solid #282828; }
+.monaco-editor .margin-view-overlays .current-line-margin { border: 2px solid #282828; }
+.monaco-editor .lines-content .cigr { box-shadow: 1px 0 0 0 #404040 inset; }
+.monaco-editor .lines-content .cigra { box-shadow: 1px 0 0 0 #707070 inset; }
+.monaco-editor .line-numbers { color: #858585; }
+.monaco-editor .current-line ~ .line-numbers { color: #c6c6c6; }
+.monaco-editor .view-ruler { box-shadow: 1px 0 0 0 #5a5a5a inset; }
+.monaco-editor .cursor { background-color: #aeafad; border-color: #aeafad; color: #515052; }
+.monaco-editor.vs .valueSetReplacement { outline: solid 2px #888888; }
+.monaco-editor .squiggly-error { background: url("data:image/svg+xml,%3Csvg%20xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%20viewBox%3D'0%200%206%203'%20enable-background%3D'new%200%200%206%203'%20height%3D'3'%20width%3D'6'%3E%3Cg%20fill%3D'%23f48771'%3E%3Cpolygon%20points%3D'5.5%2C0%202.5%2C3%201.1%2C3%204.1%2C0'%2F%3E%3Cpolygon%20points%3D'4%2C0%206%2C2%206%2C0.6%205.4%2C0'%2F%3E%3Cpolygon%20points%3D'0%2C2%201%2C3%202.4%2C3%200%2C0.6'%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E") repeat-x bottom left; }
+.monaco-editor .squiggly-warning { background: url("data:image/svg+xml,%3Csvg%20xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%20viewBox%3D'0%200%206%203'%20enable-background%3D'new%200%200%206%203'%20height%3D'3'%20width%3D'6'%3E%3Cg%20fill%3D'%23cca700'%3E%3Cpolygon%20points%3D'5.5%2C0%202.5%2C3%201.1%2C3%204.1%2C0'%2F%3E%3Cpolygon%20points%3D'4%2C0%206%2C2%206%2C0.6%205.4%2C0'%2F%3E%3Cpolygon%20points%3D'0%2C2%201%2C3%202.4%2C3%200%2C0.6'%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E") repeat-x bottom left; }
+.monaco-editor .squiggly-info { background: url("data:image/svg+xml,%3Csvg%20xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%20viewBox%3D'0%200%206%203'%20enable-background%3D'new%200%200%206%203'%20height%3D'3'%20width%3D'6'%3E%3Cg%20fill%3D'%2375beff'%3E%3Cpolygon%20points%3D'5.5%2C0%202.5%2C3%201.1%2C3%204.1%2C0'%2F%3E%3Cpolygon%20points%3D'4%2C0%206%2C2%206%2C0.6%205.4%2C0'%2F%3E%3Cpolygon%20points%3D'0%2C2%201%2C3%202.4%2C3%200%2C0.6'%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E") repeat-x bottom left; }
+.monaco-editor .squiggly-hint { background: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20height%3D%223%22%20width%3D%2212%22%3E%3Cg%20fill%3D%22rgba(238%2C%20238%2C%20238%2C%200.7)%22%3E%3Ccircle%20cx%3D%221%22%20cy%3D%221%22%20r%3D%221%22%2F%3E%3Ccircle%20cx%3D%225%22%20cy%3D%221%22%20r%3D%221%22%2F%3E%3Ccircle%20cx%3D%229%22%20cy%3D%221%22%20r%3D%221%22%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E") no-repeat bottom left; }
+.monaco-editor.showUnused .squiggly-inline-unnecessary { opacity: 0.667; }
+.monaco-editor .squiggly-inline-deprecated { text-decoration: line-through; text-decoration-color: #d4d4d4}
+.monaco-diff-editor .diff-review-line-number { color: #858585; }
+.monaco-diff-editor .diff-review-shadow { box-shadow: #000000 0 -6px 6px -6px inset; }
+.monaco-editor .line-insert, .monaco-editor .char-insert { background-color: rgba(155, 185, 85, 0.2); }
+.monaco-diff-editor .line-insert, .monaco-diff-editor .char-insert { background-color: rgba(155, 185, 85, 0.2); }
+.monaco-editor .inline-added-margin-view-zone { background-color: rgba(155, 185, 85, 0.2); }
+.monaco-editor .line-delete, .monaco-editor .char-delete { background-color: rgba(255, 0, 0, 0.2); }
+.monaco-diff-editor .line-delete, .monaco-diff-editor .char-delete { background-color: rgba(255, 0, 0, 0.2); }
+.monaco-editor .inline-deleted-margin-view-zone { background-color: rgba(255, 0, 0, 0.2); }
+.monaco-diff-editor.side-by-side .editor.modified { box-shadow: -6px 0 5px -5px #000000; }
+.monaco-editor .bracket-match { background-color: rgba(0, 100, 0, 0.1); }
+.monaco-editor .bracket-match { border: 1px solid #888888; }
+
+		.monaco-editor .contentWidgets .codicon-lightbulb {
+			color: #ffcc00;
+		}
+
+		.monaco-editor .contentWidgets .codicon-lightbulb-autofix {
+			color: #75beff;
+		}
+.monaco-editor .codelens-decoration { color: #999999; }
+.monaco-editor .codelens-decoration .codicon { color: #999999; }
+.monaco-editor .codelens-decoration > a:hover { color: #4e94ce !important; }
+.monaco-editor .codelens-decoration > a:hover .codicon { color: #4e94ce !important; }
+.codicon-symbol-array { color: #cccccc !important; }
+.codicon-symbol-boolean { color: #cccccc !important; }
+.codicon-symbol-class { color: #ee9d28 !important; }
+.codicon-symbol-method { color: #b180d7 !important; }
+.codicon-symbol-color { color: #cccccc !important; }
+.codicon-symbol-constant { color: #cccccc !important; }
+.codicon-symbol-constructor { color: #b180d7 !important; }
+
+			.codicon-symbol-value,.codicon-symbol-enum { color: #ee9d28 !important; }
+.codicon-symbol-enum-member { color: #75beff !important; }
+.codicon-symbol-event { color: #ee9d28 !important; }
+.codicon-symbol-field { color: #75beff !important; }
+.codicon-symbol-file { color: #cccccc !important; }
+.codicon-symbol-folder { color: #cccccc !important; }
+.codicon-symbol-function { color: #b180d7 !important; }
+.codicon-symbol-interface { color: #75beff !important; }
+.codicon-symbol-key { color: #cccccc !important; }
+.codicon-symbol-keyword { color: #cccccc !important; }
+.codicon-symbol-module { color: #cccccc !important; }
+.codicon-symbol-namespace { color: #cccccc !important; }
+.codicon-symbol-null { color: #cccccc !important; }
+.codicon-symbol-number { color: #cccccc !important; }
+.codicon-symbol-object { color: #cccccc !important; }
+.codicon-symbol-operator { color: #cccccc !important; }
+.codicon-symbol-package { color: #cccccc !important; }
+.codicon-symbol-property { color: #cccccc !important; }
+.codicon-symbol-reference { color: #cccccc !important; }
+.codicon-symbol-snippet { color: #cccccc !important; }
+.codicon-symbol-string { color: #cccccc !important; }
+.codicon-symbol-struct { color: #cccccc !important; }
+.codicon-symbol-text { color: #cccccc !important; }
+.codicon-symbol-type-parameter { color: #cccccc !important; }
+.codicon-symbol-unit { color: #cccccc !important; }
+.codicon-symbol-variable { color: #75beff !important; }
+.monaco-editor .findOptionsWidget { background-color: #252526; }
+.monaco-editor .findOptionsWidget { color: #cccccc; }
+.monaco-editor .findOptionsWidget { box-shadow: 0 2px 8px #000000; }
+.monaco-editor .findMatch { background-color: rgba(234, 92, 0, 0.33); }
+.monaco-editor .currentFindMatch { background-color: #515c6a; }
+.monaco-editor .findScope { background-color: rgba(58, 61, 65, 0.4); }
+.monaco-editor .find-widget { background-color: #252526; }
+.monaco-editor .find-widget { box-shadow: 0 2px 8px #000000; }
+.monaco-editor .find-widget { color: #cccccc; }
+.monaco-editor .find-widget.no-results .matchesCount { color: #f48771; }
+.monaco-editor .find-widget .monaco-sash { background-color: #454545; width: 3px !important; margin-left: -4px;}
+.monaco-editor .find-widget .monaco-inputbox.synthetic-focus { outline-color: rgba(14, 99, 156, 0.8); }
+.monaco-editor .folded-background { background-color: rgba(38, 79, 120, 0.3); }
+.monaco-editor .detected-link-active { color: #4e94ce !important; }
+.monaco-editor .monaco-editor-overlaymessage .anchor { border-top-color: #007acc; }
+.monaco-editor .monaco-editor-overlaymessage .message { border: 1px solid #007acc; }
+.monaco-editor .monaco-editor-overlaymessage .message { background-color: #063b49; }
+.monaco-editor .parameter-hints-widget { border: 1px solid #454545; }
+.monaco-editor .parameter-hints-widget.multiple .body { border-left: 1px solid rgba(69, 69, 69, 0.5); }
+.monaco-editor .parameter-hints-widget .signature.has-docs { border-bottom: 1px solid rgba(69, 69, 69, 0.5); }
+.monaco-editor .parameter-hints-widget { background-color: #252526; }
+.monaco-editor .parameter-hints-widget a { color: #3794ff; }
+.monaco-editor .parameter-hints-widget { color: #cccccc; }
+.monaco-editor .parameter-hints-widget code { background-color: rgba(10, 10, 10, 0.4); }
+.monaco-editor .suggest-widget .monaco-list .monaco-list-row .monaco-highlighted-label .highlight { color: #0097fb; }
+.monaco-editor .suggest-widget { color: #d4d4d4; }
+.monaco-editor .suggest-widget a { color: #3794ff; }
+.monaco-editor .suggest-widget code { background-color: rgba(10, 10, 10, 0.4); }
+.monaco-editor .focused .selectionHighlight { background-color: rgba(173, 214, 255, 0.15); }
+.monaco-editor .selectionHighlight { background-color: rgba(173, 214, 255, 0.07); }
+.monaco-editor .wordHighlight { background-color: rgba(87, 87, 87, 0.72); }
+.monaco-editor .wordHighlightStrong { background-color: rgba(0, 73, 114, 0.72); }
+.monaco-editor .accessibilityHelpWidget { background-color: #252526; }
+.monaco-editor .accessibilityHelpWidget { color: #cccccc; }
+.monaco-editor .accessibilityHelpWidget { box-shadow: 0 2px 8px #000000; }
+.monaco-editor .tokens-inspect-widget { border: 1px solid #454545; }
+.monaco-editor .tokens-inspect-widget .tokens-inspect-separator { background-color: #454545; }
+.monaco-editor .tokens-inspect-widget { background-color: #252526; }
+.monaco-editor .tokens-inspect-widget { color: #cccccc; }
+.monaco-editor .reference-zone-widget .ref-tree .referenceMatch .highlight { background-color: rgba(234, 92, 0, 0.3); }
+.monaco-editor .reference-zone-widget .preview .reference-decoration { background-color: rgba(255, 143, 0, 0.6); }
+.monaco-editor .reference-zone-widget .ref-tree { background-color: #252526; }
+.monaco-editor .reference-zone-widget .ref-tree { color: #bbbbbb; }
+.monaco-editor .reference-zone-widget .ref-tree .reference-file { color: #ffffff; }
+.monaco-editor .reference-zone-widget .ref-tree .monaco-list:focus .monaco-list-rows > .monaco-list-row.selected:not(.highlighted) { background-color: rgba(51, 153, 255, 0.2); }
+.monaco-editor .reference-zone-widget .ref-tree .monaco-list:focus .monaco-list-rows > .monaco-list-row.selected:not(.highlighted) { color: #ffffff !important; }
+.monaco-editor .reference-zone-widget .preview .monaco-editor .monaco-editor-background,.monaco-editor .reference-zone-widget .preview .monaco-editor .inputarea.ime-input {	background-color: #001f33;}
+.monaco-editor .reference-zone-widget .preview .monaco-editor .margin {	background-color: #001f33;}
+.monaco-editor .goto-definition-link { color: #4e94ce !important; }
+
+			.monaco-editor .zone-widget .codicon-error,
+			.markers-panel .marker-icon.codicon-error,
+			.extensions-viewlet > .extensions .codicon-error,
+			.monaco-dialog-box .dialog-message-row .codicon-error {
+				color: #f48771;
+			}
+		
+
+			.monaco-editor .zone-widget .codicon-warning,
+			.markers-panel .marker-icon.codicon-warning,
+			.extensions-viewlet > .extensions .codicon-warning,
+			.extension-editor .codicon-warning,
+			.monaco-dialog-box .dialog-message-row .codicon-warning {
+				color: #cca700;
+			}
+		
+
+			.monaco-editor .zone-widget .codicon-info,
+			.markers-panel .marker-icon.codicon-info,
+			.extensions-viewlet > .extensions .codicon-info,
+			.extension-editor .codicon-info,
+			.monaco-dialog-box .dialog-message-row .codicon-info {
+				color: #75beff;
+			}
+		
+.monaco-editor .marker-widget a { color: #3794ff; }
+.monaco-editor .marker-widget a.code-link span:hover { color: #3794ff; }
+.monaco-editor-hover .hover-contents a.code-link span:hover { color: #3794ff; }
+.monaco-editor .hoverHighlight { background-color: rgba(38, 79, 120, 0.25); }
+.monaco-editor .monaco-editor-hover { background-color: #252526; }
+.monaco-editor .monaco-editor-hover { border: 1px solid #454545; }
+.monaco-editor .monaco-editor-hover .hover-row:not(:first-child):not(:empty) { border-top: 1px solid rgba(69, 69, 69, 0.5); }
+.monaco-editor .monaco-editor-hover hr { border-top: 1px solid rgba(69, 69, 69, 0.5); }
+.monaco-editor .monaco-editor-hover hr { border-bottom: 0px solid rgba(69, 69, 69, 0.5); }
+.monaco-editor .monaco-editor-hover a { color: #3794ff; }
+.monaco-editor .monaco-editor-hover { color: #cccccc; }
+.monaco-editor .monaco-editor-hover .hover-row .actions { background-color: #2c2c2d; }
+.monaco-editor .monaco-editor-hover code { background-color: rgba(10, 10, 10, 0.4); }
+.monaco-editor .snippet-placeholder { background-color: rgba(124, 124, 124, 0.3); outline-color: transparent; }
+.monaco-editor .finish-snippet-placeholder { background-color: transparent; outline-color: #525252; }
+
+.mtk1 { color: #d4d4d4; }
+.mtk2 { color: #1e1e1e; }
+.mtk3 { color: #cc6666; }
+.mtk4 { color: #9cdcfe; }
+.mtk5 { color: #ce9178; }
+.mtk6 { color: #b5cea8; }
+.mtk7 { color: #608b4e; }
+.mtk8 { color: #569cd6; }
+.mtk9 { color: #dcdcdc; }
+.mtk10 { color: #808080; }
+.mtk11 { color: #f44747; }
+.mtk12 { color: #c586c0; }
+.mtk13 { color: #a79873; }
+.mtk14 { color: #dd6a6f; }
+.mtk15 { color: #5bb498; }
+.mtk16 { color: #909090; }
+.mtk17 { color: #778899; }
+.mtk18 { color: #ff00ff; }
+.mtk19 { color: #b46695; }
+.mtk20 { color: #ff0000; }
+.mtk21 { color: #4f76ac; }
+.mtk22 { color: #3dc9b0; }
+.mtk23 { color: #74b0df; }
+.mtk24 { color: #4864aa; }
+.mtki { font-style: italic; }
+.mtkb { font-weight: bold; }
+.mtku { text-decoration: underline; text-underline-position: under; }</style><style type="text/css" media="screen">
+		.monaco-editor .codelens-decoration.ee1f61 { height: 21px; line-height: 19px; font-size: 13px; padding-right: 6px;}
+		.monaco-editor .codelens-decoration.ee1f61 > a > .codicon { line-height: 19px; font-size: 13px; }
+		</style><script async="async" type="text/javascript" src="./Discussion 2 _ CS 61A Fall 2022_files/python.js.下载"></script><style type="text/css" media="screen">
+		.monaco-editor .codelens-decoration.ee1f62 { height: 21px; line-height: 19px; font-size: 13px; padding-right: 6px;}
+		.monaco-editor .codelens-decoration.ee1f62 > a > .codicon { line-height: 19px; font-size: 13px; }
+		</style><style type="text/css" media="screen">
+		.monaco-editor .codelens-decoration.ee1f63 { height: 21px; line-height: 19px; font-size: 13px; padding-right: 6px;}
+		.monaco-editor .codelens-decoration.ee1f63 > a > .codicon { line-height: 19px; font-size: 13px; }
+		</style></head>
+
+  <body id="index" class="home modal-open" data-new-gr-c-s-check-loaded="14.1089.0" data-gr-ext-installed="" data-new-gr-c-s-loaded="14.1089.0" style="padding-right: 17px;">
+    <nav class="navbar navbar-default navbar-static-top">
+      <div class="container noselect">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar-collapse-section">
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="https://cs61a.org/">
+            <img style="max-width:60px; margin-top: -20px;" class="logo" src="./Discussion 2 _ CS 61A Fall 2022_files/released_assets_images_logo.png">
+          </a>
+        <button type="button" class="btn btn-primary" style="float: left; margin-top: 8px;"><span style="filter: grayscale(100%);">✏️</span></button></div>
+
+        <div class="collapse navbar-collapse" id="navbar-collapse-section">
+          <ul class="nav navbar-nav navbar-right">
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" href="https://cs61a.org/disc/sol-disc02/#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                Calendar
+                <span class="caret"></span>
+              </a>
+              <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                <li><a href="https://cs61a.org/weekly">Weekly Schedule</a></li>
+                <li><a href="https://cs61a.org/office-hours">Office Hours</a></li>
+              </ul>
+            </li>
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" href="https://cs61a.org/disc/sol-disc02/#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                Links
+                <span class="caret"></span>
+              </a>
+              <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                <li><a href="https://go.cs61a.org/lecturezoom">Lecture Zoom Link</a></li>
+                <li><a href="https://sections.cs61a.org/">Sections Tool</a></li>
+                <li><a href="https://oh.cs61a.org/">Office Hours Queue</a></li>
+              </ul>
+            </li>
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" href="https://cs61a.org/disc/sol-disc02/#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                Staff
+                <span class="caret"></span>
+              </a>
+              <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                <li><a href="https://cs61a.org/instructor">Instructors</a></li>
+                <li><a href="https://cs61a.org/TAs">TAs</a></li>
+                <li><a href="https://cs61a.org/tutors">Tutors</a></li>
+                <li><a href="https://cs61a.org/academic-interns">Academic Interns</a></li>
+              </ul>
+            </li>
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" href="https://cs61a.org/disc/sol-disc02/#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                Resources
+                <span class="caret"></span>
+              </a>
+              <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                <li><a href="https://go.cs61a.org/extensions">Request an Extension</a></li>
+                <li><a href="https://go.cs61a.org/accommodation-appts">Book an Accommodations Appointment</a></li>
+                <li><a href="https://cs61a.org/resources/">Topical Resources + Past Exams</a></li>
+                <li><a href="https://tutor.cs61a.org/">PythonTutor</a></li>
+                <li><a href="https://code.cs61a.org/">Code</a></li>
+                <li><a href="https://edstem.org/us/courses/25379/discussion/" target="_blank">Ed</a></li>
+                <li><a href="https://cs61a.org/articles/campus-res/">Department/Campus Resources</a></li>
+              </ul>
+            </li>
+            <li><a href="https://cs61a.org/articles/about">Syllabus</a></li>
+            <li><a href="https://cs61a.org/contact/">Contact</a></li>
+            <li>
+              <label class="switch">
+                <input type="checkbox" id="toggle-mode-cb">
+                <span class="slider round"></span>
+              </label>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+
+    <main id="content" class="container">
+      
+<div class="row">
+  <div class="col-md-9">
+    <header>
+      <h1>
+        
+Discussion 2: Environment Diagrams, Higher-Order Functions
+
+        
+        
+        <ul class="inline-block list-inline">
+          <li><a href="https://cs61a.org/disc/sol-disc02/disc02.pdf" class="label label-outline">disc02.pdf</a></li>
+        </ul>
+        
+        
+      </h1>
+    </header>
+    
+
+<div class="alert storable-login-status alert-success"><p>
+            You are currently logged in, so your work will be saved for you to re-visit later.
+            </p><p>
+            <button id="disc-clear-btn" class="btn btn-outline">Clear your saved answers on all worksheets</button></p></div>
+
+This is an online worksheet that you can work on during discussions.
+Your work is not graded and you do not need to submit anything.
+
+
+    
+
+
+<blockquote><p><strong>Note on web discussions:</strong>
+In order to use the environment diagrams on the site,
+please log in using the account you use for Okpy.</p></blockquote>
+
+
+<h1 id="call-expressions">Call Expressions</h1>
+
+
+<p><strong>Call expressions</strong>, such as <code>square(2)</code>, apply functions to arguments. When
+executing call expressions, we create a new frame in our diagram to keep
+track of local variables:</p>
+
+<ol>
+  <li>Evaluate the operator, which should evaluate to a function.</li>
+  <li>Evaluate the operands from left to right.</li>
+  <li><p>Draw a new frame, labelling it with the following:</p>
+
+  <ul>
+    <li>A unique index (<code>f1</code>, <code>f2</code>, <code>f3</code>, ...).</li>
+    <li>The <strong>intrinsic name</strong> of the function, which is the name of the
+    function object itself. For example, if the function object is
+    <code>func square(x) [parent=Global]</code>, the intrinsic name is <code>square</code>.</li>
+    <li>The parent frame ([<code>parent=Global</code>]).</li>
+  </ul></li>
+  <li>Bind the formal parameters to the argument values obtained in step 2 (e.g.
+  bind <code>x</code> to 3).</li>
+  <li>Evaluate the body of the function in this new frame until a return value is
+  obtained. Write down the return value in the frame.</li>
+</ol>
+
+<p>If a function does not have a return value, it implicitly returns <code>None</code>. In that case,
+the “Return value” box should contain <code>None</code>.</p>
+
+<p><strong>Note:</strong>
+Since we do not know how built-in functions like <code>min(...)</code> or imported
+functions like <code>add(...)</code> are implemented, we do not draw a new frame when we
+call them, since we would not be able to fill it out accurately.</p>
+
+
+<h3 id="q1-call-diagram">Q1: Call Diagram</h3>
+
+
+<p>Let’s put it all together! Draw an environment diagram for the following code. You may not have to use all of the blanks provided to you.</p>
+
+
+            
+<pre><code class="hljs python"><span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">double</span><span class="hljs-params">(x)</span>:</span>
+    <span class="hljs-keyword">return</span> x * <span class="hljs-number">2</span>
+
+hmmm = double
+wow = double(<span class="hljs-number">3</span>)
+hmmm(wow)</code></pre>
+
+            <b>Your Answer</b>
+            
+<pre><code class="hljs python"><span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">double</span><span class="hljs-params">(x)</span>:</span>
+    <span class="hljs-keyword">return</span> x * <span class="hljs-number">2</span>
+
+hmmm = double
+wow = double(<span class="hljs-number">3</span>)
+hmmm(wow)</code></pre>
+
+        <div class="env-diagram" id="env-diagram-call-diagram">
+          <div class="env-diagram-objects">
+            <div>Objects</div>
+            <ul><li>
+            <button class="env-diagram-connector" id="env-diagram-call-diagram-object0-connector">▶</button>
+            <input class="env-text-storable" id="env-diagram-call-diagram-object0-value" type="text">
+            </li><li>
+            <button class="env-diagram-connector" id="env-diagram-call-diagram-object1-connector">▶</button>
+            <input class="env-text-storable" id="env-diagram-call-diagram-object1-value" type="text">
+            </li><li>
+            <button class="env-diagram-connector" id="env-diagram-call-diagram-object2-connector">▶</button>
+            <input class="env-text-storable" id="env-diagram-call-diagram-object2-value" type="text">
+            </li>
+            <li><button class="env-diagram-trash" title="Click here to remove a binding">🗑️</button></li>
+            </ul>
+        </div>
+          <div class="env-diagram-frame">
+                <div>Global frame</div>
+                <table class="table">
+                    <tbody>
+                    
+                <tr>
+                    <td><input type="text" class="env-text-storable" id="env-diagram-call-diagram-frame0-binding0-name"></td>
+                    <td><input type="text" class="env-text-storable" id="env-diagram-call-diagram-frame0-binding0-value">
+                <button class="env-diagram-connector" id="env-diagram-call-diagram-frame0-binding0-connector">⬤
+                </button>
+            </td>
+                </tr>
+            
+                <tr>
+                    <td><input type="text" class="env-text-storable" id="env-diagram-call-diagram-frame0-binding1-name"></td>
+                    <td><input type="text" class="env-text-storable" id="env-diagram-call-diagram-frame0-binding1-value">
+                <button class="env-diagram-connector" id="env-diagram-call-diagram-frame0-binding1-connector">⬤
+                </button>
+            </td>
+                </tr>
+            
+                <tr>
+                    <td><input type="text" class="env-text-storable" id="env-diagram-call-diagram-frame0-binding2-name"></td>
+                    <td><input type="text" class="env-text-storable" id="env-diagram-call-diagram-frame0-binding2-value">
+                <button class="env-diagram-connector" id="env-diagram-call-diagram-frame0-binding2-connector">⬤
+                </button>
+            </td>
+                </tr>
+            
+                <tr>
+                    <td><input type="text" class="env-text-storable" id="env-diagram-call-diagram-frame0-binding3-name"></td>
+                    <td><input type="text" class="env-text-storable" id="env-diagram-call-diagram-frame0-binding3-value">
+                <button class="env-diagram-connector" id="env-diagram-call-diagram-frame0-binding3-connector">⬤
+                </button>
+            </td>
+                </tr>
+            
+                    
+                    </tbody>
+                </table>
+            </div><div class="env-diagram-frame">
+                
+                <div>
+                f1: <input type="text" class="env-text-storable" id="env-diagram-call-diagram-frame1-funcname">
+                [parent=<input type="text" class="env-text-storable" id="env-diagram-call-diagram-frame1-parent">]
+                </div>
+            
+                <table class="table">
+                    <tbody>
+                    
+                <tr>
+                    <td><input type="text" class="env-text-storable" id="env-diagram-call-diagram-frame1-binding0-name"></td>
+                    <td><input type="text" class="env-text-storable" id="env-diagram-call-diagram-frame1-binding0-value">
+                <button class="env-diagram-connector" id="env-diagram-call-diagram-frame1-binding0-connector">⬤
+                </button>
+            </td>
+                </tr>
+            
+                <tr>
+                    <td><input type="text" class="env-text-storable" id="env-diagram-call-diagram-frame1-binding1-name"></td>
+                    <td><input type="text" class="env-text-storable" id="env-diagram-call-diagram-frame1-binding1-value">
+                <button class="env-diagram-connector" id="env-diagram-call-diagram-frame1-binding1-connector">⬤
+                </button>
+            </td>
+                </tr>
+            
+                    
+                <tr>
+                    <td>Return value</td>
+                    <td><input type="text" class="env-text-storable" id="env-diagram-call-diagram-frame1-return">
+                <button class="env-diagram-connector" id="env-diagram-call-diagram-frame1-return-connector">⬤
+                </button>
+            </td>
+                </tr>
+                
+                    </tbody>
+                </table>
+            </div><div class="env-diagram-frame">
+                
+                <div>
+                f2: <input type="text" class="env-text-storable" id="env-diagram-call-diagram-frame2-funcname">
+                [parent=<input type="text" class="env-text-storable" id="env-diagram-call-diagram-frame2-parent">]
+                </div>
+            
+                <table class="table">
+                    <tbody>
+                    
+                <tr>
+                    <td><input type="text" class="env-text-storable" id="env-diagram-call-diagram-frame2-binding0-name"></td>
+                    <td><input type="text" class="env-text-storable" id="env-diagram-call-diagram-frame2-binding0-value">
+                <button class="env-diagram-connector" id="env-diagram-call-diagram-frame2-binding0-connector">⬤
+                </button>
+            </td>
+                </tr>
+            
+                <tr>
+                    <td><input type="text" class="env-text-storable" id="env-diagram-call-diagram-frame2-binding1-name"></td>
+                    <td><input type="text" class="env-text-storable" id="env-diagram-call-diagram-frame2-binding1-value">
+                <button class="env-diagram-connector" id="env-diagram-call-diagram-frame2-binding1-connector">⬤
+                </button>
+            </td>
+                </tr>
+            
+                    
+                <tr>
+                    <td>Return value</td>
+                    <td><input type="text" class="env-text-storable" id="env-diagram-call-diagram-frame2-return">
+                <button class="env-diagram-connector" id="env-diagram-call-diagram-frame2-return-connector">⬤
+                </button>
+            </td>
+                </tr>
+                
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="storable-status">Saved at Mon Dec 19 2022 15:09:13 GMT+0800 (中国标准时间).</div>
+        
+            <div class="sol-highlight">
+                <b>Solution</b>
+                
+            <iframe width="800" height="578" frameborder="0" src="./Discussion 2 _ CS 61A Fall 2022_files/iframe-embed.html">
+            </iframe>
+        
+            </div>
+        
+
+<div class="sol-highlight">
+<a href="https://youtu.be/kmspUmcd6RI">Video diagram</a>
+</div>
+
+<div class="page-break"></div>
+
+
+<h3 id="q2-nested-calls-diagrams">Q2: Nested Calls Diagrams</h3>
+
+
+<p>Draw the environment diagram that results from executing the code below. You may not need to use all of the frames and blanks provided to you.</p>
+
+
+            
+<pre><code class="hljs python"><span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">f</span><span class="hljs-params">(x)</span>:</span>
+    <span class="hljs-keyword">return</span> x
+
+<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">g</span><span class="hljs-params">(x, y)</span>:</span>
+    <span class="hljs-keyword">if</span> x(y):
+        <span class="hljs-keyword">return</span> <span class="hljs-keyword">not</span> y
+    <span class="hljs-keyword">return</span> y
+
+x = <span class="hljs-number">3</span>
+x = g(f, x)
+f = g(f, <span class="hljs-number">0</span>)</code></pre>
+
+            <b>Your Answer</b>
+            
+<pre><code class="hljs python"><span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">f</span><span class="hljs-params">(x)</span>:</span>
+    <span class="hljs-keyword">return</span> x
+
+<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">g</span><span class="hljs-params">(x, y)</span>:</span>
+    <span class="hljs-keyword">if</span> x(y):
+        <span class="hljs-keyword">return</span> <span class="hljs-keyword">not</span> y
+    <span class="hljs-keyword">return</span> y
+
+x = <span class="hljs-number">3</span>
+x = g(f, x)
+f = g(f, <span class="hljs-number">0</span>)</code></pre>
+
+        <div class="env-diagram" id="env-diagram-nested-calls-diagram">
+          <div class="env-diagram-objects">
+            <div>Objects</div>
+            <ul><li>
+            <button class="env-diagram-connector" id="env-diagram-nested-calls-diagram-object0-connector">▶</button>
+            <input class="env-text-storable" id="env-diagram-nested-calls-diagram-object0-value" type="text">
+            </li><li>
+            <button class="env-diagram-connector" id="env-diagram-nested-calls-diagram-object1-connector">▶</button>
+            <input class="env-text-storable" id="env-diagram-nested-calls-diagram-object1-value" type="text">
+            </li><li>
+            <button class="env-diagram-connector" id="env-diagram-nested-calls-diagram-object2-connector">▶</button>
+            <input class="env-text-storable" id="env-diagram-nested-calls-diagram-object2-value" type="text">
+            </li>
+            <li><button class="env-diagram-trash" title="Click here to remove a binding">🗑️</button></li>
+            </ul>
+        </div>
+          <div class="env-diagram-frame">
+                <div>Global frame</div>
+                <table class="table">
+                    <tbody>
+                    
+                <tr>
+                    <td><input type="text" class="env-text-storable" id="env-diagram-nested-calls-diagram-frame0-binding0-name"></td>
+                    <td><input type="text" class="env-text-storable" id="env-diagram-nested-calls-diagram-frame0-binding0-value">
+                <button class="env-diagram-connector" id="env-diagram-nested-calls-diagram-frame0-binding0-connector">⬤
+                </button>
+            </td>
+                </tr>
+            
+                <tr>
+                    <td><input type="text" class="env-text-storable" id="env-diagram-nested-calls-diagram-frame0-binding1-name"></td>
+                    <td><input type="text" class="env-text-storable" id="env-diagram-nested-calls-diagram-frame0-binding1-value">
+                <button class="env-diagram-connector" id="env-diagram-nested-calls-diagram-frame0-binding1-connector">⬤
+                </button>
+            </td>
+                </tr>
+            
+                <tr>
+                    <td><input type="text" class="env-text-storable" id="env-diagram-nested-calls-diagram-frame0-binding2-name"></td>
+                    <td><input type="text" class="env-text-storable" id="env-diagram-nested-calls-diagram-frame0-binding2-value">
+                <button class="env-diagram-connector" id="env-diagram-nested-calls-diagram-frame0-binding2-connector">⬤
+                </button>
+            </td>
+                </tr>
+            
+                    
+                    </tbody>
+                </table>
+            </div><div class="env-diagram-frame">
+                
+                <div>
+                f1: <input type="text" class="env-text-storable" id="env-diagram-nested-calls-diagram-frame1-funcname">
+                [parent=<input type="text" class="env-text-storable" id="env-diagram-nested-calls-diagram-frame1-parent">]
+                </div>
+            
+                <table class="table">
+                    <tbody>
+                    
+                <tr>
+                    <td><input type="text" class="env-text-storable" id="env-diagram-nested-calls-diagram-frame1-binding0-name"></td>
+                    <td><input type="text" class="env-text-storable" id="env-diagram-nested-calls-diagram-frame1-binding0-value">
+                <button class="env-diagram-connector" id="env-diagram-nested-calls-diagram-frame1-binding0-connector">⬤
+                </button>
+            </td>
+                </tr>
+            
+                <tr>
+                    <td><input type="text" class="env-text-storable" id="env-diagram-nested-calls-diagram-frame1-binding1-name"></td>
+                    <td><input type="text" class="env-text-storable" id="env-diagram-nested-calls-diagram-frame1-binding1-value">
+                <button class="env-diagram-connector" id="env-diagram-nested-calls-diagram-frame1-binding1-connector">⬤
+                </button>
+            </td>
+                </tr>
+            
+                    
+                <tr>
+                    <td>Return value</td>
+                    <td><input type="text" class="env-text-storable" id="env-diagram-nested-calls-diagram-frame1-return">
+                <button class="env-diagram-connector" id="env-diagram-nested-calls-diagram-frame1-return-connector">⬤
+                </button>
+            </td>
+                </tr>
+                
+                    </tbody>
+                </table>
+            </div><div class="env-diagram-frame">
+                
+                <div>
+                f2: <input type="text" class="env-text-storable" id="env-diagram-nested-calls-diagram-frame2-funcname">
+                [parent=<input type="text" class="env-text-storable" id="env-diagram-nested-calls-diagram-frame2-parent">]
+                </div>
+            
+                <table class="table">
+                    <tbody>
+                    
+                <tr>
+                    <td><input type="text" class="env-text-storable" id="env-diagram-nested-calls-diagram-frame2-binding0-name"></td>
+                    <td><input type="text" class="env-text-storable" id="env-diagram-nested-calls-diagram-frame2-binding0-value">
+                <button class="env-diagram-connector" id="env-diagram-nested-calls-diagram-frame2-binding0-connector">⬤
+                </button>
+            </td>
+                </tr>
+            
+                <tr>
+                    <td><input type="text" class="env-text-storable" id="env-diagram-nested-calls-diagram-frame2-binding1-name"></td>
+                    <td><input type="text" class="env-text-storable" id="env-diagram-nested-calls-diagram-frame2-binding1-value">
+                <button class="env-diagram-connector" id="env-diagram-nested-calls-diagram-frame2-binding1-connector">⬤
+                </button>
+            </td>
+                </tr>
+            
+                    
+                <tr>
+                    <td>Return value</td>
+                    <td><input type="text" class="env-text-storable" id="env-diagram-nested-calls-diagram-frame2-return">
+                <button class="env-diagram-connector" id="env-diagram-nested-calls-diagram-frame2-return-connector">⬤
+                </button>
+            </td>
+                </tr>
+                
+                    </tbody>
+                </table>
+            </div><div class="env-diagram-frame">
+                
+                <div>
+                f3: <input type="text" class="env-text-storable" id="env-diagram-nested-calls-diagram-frame3-funcname">
+                [parent=<input type="text" class="env-text-storable" id="env-diagram-nested-calls-diagram-frame3-parent">]
+                </div>
+            
+                <table class="table">
+                    <tbody>
+                    
+                <tr>
+                    <td><input type="text" class="env-text-storable" id="env-diagram-nested-calls-diagram-frame3-binding0-name"></td>
+                    <td><input type="text" class="env-text-storable" id="env-diagram-nested-calls-diagram-frame3-binding0-value">
+                <button class="env-diagram-connector" id="env-diagram-nested-calls-diagram-frame3-binding0-connector">⬤
+                </button>
+            </td>
+                </tr>
+            
+                <tr>
+                    <td><input type="text" class="env-text-storable" id="env-diagram-nested-calls-diagram-frame3-binding1-name"></td>
+                    <td><input type="text" class="env-text-storable" id="env-diagram-nested-calls-diagram-frame3-binding1-value">
+                <button class="env-diagram-connector" id="env-diagram-nested-calls-diagram-frame3-binding1-connector">⬤
+                </button>
+            </td>
+                </tr>
+            
+                    
+                <tr>
+                    <td>Return value</td>
+                    <td><input type="text" class="env-text-storable" id="env-diagram-nested-calls-diagram-frame3-return">
+                <button class="env-diagram-connector" id="env-diagram-nested-calls-diagram-frame3-return-connector">⬤
+                </button>
+            </td>
+                </tr>
+                
+                    </tbody>
+                </table>
+            </div><div class="env-diagram-frame">
+                
+                <div>
+                f4: <input type="text" class="env-text-storable" id="env-diagram-nested-calls-diagram-frame4-funcname">
+                [parent=<input type="text" class="env-text-storable" id="env-diagram-nested-calls-diagram-frame4-parent">]
+                </div>
+            
+                <table class="table">
+                    <tbody>
+                    
+                <tr>
+                    <td><input type="text" class="env-text-storable" id="env-diagram-nested-calls-diagram-frame4-binding0-name"></td>
+                    <td><input type="text" class="env-text-storable" id="env-diagram-nested-calls-diagram-frame4-binding0-value">
+                <button class="env-diagram-connector" id="env-diagram-nested-calls-diagram-frame4-binding0-connector">⬤
+                </button>
+            </td>
+                </tr>
+            
+                <tr>
+                    <td><input type="text" class="env-text-storable" id="env-diagram-nested-calls-diagram-frame4-binding1-name"></td>
+                    <td><input type="text" class="env-text-storable" id="env-diagram-nested-calls-diagram-frame4-binding1-value">
+                <button class="env-diagram-connector" id="env-diagram-nested-calls-diagram-frame4-binding1-connector">⬤
+                </button>
+            </td>
+                </tr>
+            
+                    
+                <tr>
+                    <td>Return value</td>
+                    <td><input type="text" class="env-text-storable" id="env-diagram-nested-calls-diagram-frame4-return">
+                <button class="env-diagram-connector" id="env-diagram-nested-calls-diagram-frame4-return-connector">⬤
+                </button>
+            </td>
+                </tr>
+                
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="storable-status"></div>
+        
+            <div class="sol-highlight">
+                <b>Solution</b>
+                
+            <iframe width="800" height="802" frameborder="0" src="./Discussion 2 _ CS 61A Fall 2022_files/iframe-embed(1).html">
+            </iframe>
+        
+            </div>
+        
+
+<div class="sol-highlight">
+<a href="https://youtu.be/zVThisRzK7A">Video walkthrough</a>
+</div>
+
+
+<h1 id="lambda-expressions">Lambda Expressions</h1>
+
+
+<p>A lambda expression evaluates to a function, called a lambda function. For
+example, <code>lambda y: x + y</code> is a lambda expression, and can be read as "a
+function that takes in one parameter <code>y</code> and returns <code>x + y</code>."</p>
+
+<p>A lambda expression by itself evaluates to a function but does not bind it to
+a name. Also note that the return expression of this function is not evaluated
+until the lambda is called. This is similar to how defining a new function
+using a def statement does not execute the function’s body until it is later
+called.</p>
+
+<pre><code class="hljs python"><span class="hljs-meta">&gt;&gt;&gt; </span>what = <span class="hljs-keyword">lambda</span> x : x + <span class="hljs-number">5</span>
+<span class="hljs-meta">&gt;&gt;&gt; </span>what
+&lt;function &lt;<span class="hljs-keyword">lambda</span>&gt; at <span class="hljs-number">0xf3f490</span>&gt;</code></pre>
+
+<p>Unlike <code>def</code> statements, lambda expressions can be used as an operator or an
+operand to a call expression. This is because they are simply one-line
+expressions that evaluate to functions. In the example below,
+<code>(lambda y: y + 5)</code> is the operator and <code>4</code> is the operand.</p>
+
+<pre><code class="hljs python"><span class="hljs-meta">&gt;&gt;&gt; </span>(<span class="hljs-keyword">lambda</span> y: y + <span class="hljs-number">5</span>)(<span class="hljs-number">4</span>)
+<span class="hljs-number">9</span>
+<span class="hljs-meta">&gt;&gt;&gt; </span>(<span class="hljs-keyword">lambda</span> f, x: f(x))(<span class="hljs-keyword">lambda</span> y: y + <span class="hljs-number">1</span>, <span class="hljs-number">10</span>)
+<span class="hljs-number">11</span></code></pre>
+
+<div class="page-break"></div>
+
+
+<h3 id="q3-lambda-the-environment-diagram">Q3: Lambda the Environment Diagram</h3>
+
+
+<p>Draw the environment diagram for the following code and
+predict what Python will output.</p>
+
+
+            
+<pre><code class="hljs python">a = <span class="hljs-keyword">lambda</span> x: x * <span class="hljs-number">2</span> + <span class="hljs-number">1</span>
+<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">b</span><span class="hljs-params">(b, x)</span>:</span>
+    <span class="hljs-keyword">return</span> b(x + a(x))
+x = <span class="hljs-number">3</span>
+x = b(a, x)</code></pre>
+
+            <b>Your Answer</b>
+            
+<pre><code class="hljs python">a = <span class="hljs-keyword">lambda</span> x: x * <span class="hljs-number">2</span> + <span class="hljs-number">1</span>
+<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">b</span><span class="hljs-params">(b, x)</span>:</span>
+    <span class="hljs-keyword">return</span> b(x + a(x))
+x = <span class="hljs-number">3</span>
+x = b(a, x)</code></pre>
+
+        <div class="env-diagram" id="env-diagram-lambda-diagram">
+          <div class="env-diagram-objects">
+            <div>Objects</div>
+            <ul><li>
+            <button class="env-diagram-connector" id="env-diagram-lambda-diagram-object0-connector">▶</button>
+            <input class="env-text-storable" id="env-diagram-lambda-diagram-object0-value" type="text">
+            </li><li>
+            <button class="env-diagram-connector" id="env-diagram-lambda-diagram-object1-connector">▶</button>
+            <input class="env-text-storable" id="env-diagram-lambda-diagram-object1-value" type="text">
+            </li>
+            <li><button class="env-diagram-trash" title="Click here to remove a binding">🗑️</button></li>
+            </ul>
+        </div>
+          <div class="env-diagram-frame">
+                <div>Global frame</div>
+                <table class="table">
+                    <tbody>
+                    
+                <tr>
+                    <td><input type="text" class="env-text-storable" id="env-diagram-lambda-diagram-frame0-binding0-name"></td>
+                    <td><input type="text" class="env-text-storable" id="env-diagram-lambda-diagram-frame0-binding0-value">
+                <button class="env-diagram-connector" id="env-diagram-lambda-diagram-frame0-binding0-connector">⬤
+                </button>
+            </td>
+                </tr>
+            
+                <tr>
+                    <td><input type="text" class="env-text-storable" id="env-diagram-lambda-diagram-frame0-binding1-name"></td>
+                    <td><input type="text" class="env-text-storable" id="env-diagram-lambda-diagram-frame0-binding1-value">
+                <button class="env-diagram-connector" id="env-diagram-lambda-diagram-frame0-binding1-connector">⬤
+                </button>
+            </td>
+                </tr>
+            
+                <tr>
+                    <td><input type="text" class="env-text-storable" id="env-diagram-lambda-diagram-frame0-binding2-name"></td>
+                    <td><input type="text" class="env-text-storable" id="env-diagram-lambda-diagram-frame0-binding2-value">
+                <button class="env-diagram-connector" id="env-diagram-lambda-diagram-frame0-binding2-connector">⬤
+                </button>
+            </td>
+                </tr>
+            
+                    
+                    </tbody>
+                </table>
+            </div><div class="env-diagram-frame">
+                
+                <div>
+                f1: <input type="text" class="env-text-storable" id="env-diagram-lambda-diagram-frame1-funcname">
+                [parent=<input type="text" class="env-text-storable" id="env-diagram-lambda-diagram-frame1-parent">]
+                </div>
+            
+                <table class="table">
+                    <tbody>
+                    
+                <tr>
+                    <td><input type="text" class="env-text-storable" id="env-diagram-lambda-diagram-frame1-binding0-name"></td>
+                    <td><input type="text" class="env-text-storable" id="env-diagram-lambda-diagram-frame1-binding0-value">
+                <button class="env-diagram-connector" id="env-diagram-lambda-diagram-frame1-binding0-connector">⬤
+                </button>
+            </td>
+                </tr>
+            
+                <tr>
+                    <td><input type="text" class="env-text-storable" id="env-diagram-lambda-diagram-frame1-binding1-name"></td>
+                    <td><input type="text" class="env-text-storable" id="env-diagram-lambda-diagram-frame1-binding1-value">
+                <button class="env-diagram-connector" id="env-diagram-lambda-diagram-frame1-binding1-connector">⬤
+                </button>
+            </td>
+                </tr>
+            
+                    
+                <tr>
+                    <td>Return value</td>
+                    <td><input type="text" class="env-text-storable" id="env-diagram-lambda-diagram-frame1-return">
+                <button class="env-diagram-connector" id="env-diagram-lambda-diagram-frame1-return-connector">⬤
+                </button>
+            </td>
+                </tr>
+                
+                    </tbody>
+                </table>
+            </div><div class="env-diagram-frame">
+                
+                <div>
+                f2: <input type="text" class="env-text-storable" id="env-diagram-lambda-diagram-frame2-funcname">
+                [parent=<input type="text" class="env-text-storable" id="env-diagram-lambda-diagram-frame2-parent">]
+                </div>
+            
+                <table class="table">
+                    <tbody>
+                    
+                <tr>
+                    <td><input type="text" class="env-text-storable" id="env-diagram-lambda-diagram-frame2-binding0-name"></td>
+                    <td><input type="text" class="env-text-storable" id="env-diagram-lambda-diagram-frame2-binding0-value">
+                <button class="env-diagram-connector" id="env-diagram-lambda-diagram-frame2-binding0-connector">⬤
+                </button>
+            </td>
+                </tr>
+            
+                    
+                <tr>
+                    <td>Return value</td>
+                    <td><input type="text" class="env-text-storable" id="env-diagram-lambda-diagram-frame2-return">
+                <button class="env-diagram-connector" id="env-diagram-lambda-diagram-frame2-return-connector">⬤
+                </button>
+            </td>
+                </tr>
+                
+                    </tbody>
+                </table>
+            </div><div class="env-diagram-frame">
+                
+                <div>
+                f3: <input type="text" class="env-text-storable" id="env-diagram-lambda-diagram-frame3-funcname">
+                [parent=<input type="text" class="env-text-storable" id="env-diagram-lambda-diagram-frame3-parent">]
+                </div>
+            
+                <table class="table">
+                    <tbody>
+                    
+                <tr>
+                    <td><input type="text" class="env-text-storable" id="env-diagram-lambda-diagram-frame3-binding0-name"></td>
+                    <td><input type="text" class="env-text-storable" id="env-diagram-lambda-diagram-frame3-binding0-value">
+                <button class="env-diagram-connector" id="env-diagram-lambda-diagram-frame3-binding0-connector">⬤
+                </button>
+            </td>
+                </tr>
+            
+                    
+                <tr>
+                    <td>Return value</td>
+                    <td><input type="text" class="env-text-storable" id="env-diagram-lambda-diagram-frame3-return">
+                <button class="env-diagram-connector" id="env-diagram-lambda-diagram-frame3-return-connector">⬤
+                </button>
+            </td>
+                </tr>
+                
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="storable-status"></div>
+        
+            <div class="sol-highlight">
+                <b>Solution</b>
+                
+            <iframe width="800" height="610" frameborder="0" src="./Discussion 2 _ CS 61A Fall 2022_files/iframe-embed(2).html">
+            </iframe>
+        
+            </div>
+        
+
+<div class="page-break"></div>
+
+
+<h1 id="higher-order-functions">Higher Order Functions</h1>
+
+
+<p>A <strong>higher order function</strong> (HOF) is a function that manipulates other
+functions by taking in functions as arguments, returning a function, or both.
+For example, the function <code>compose</code> below takes in two functions as arguments
+and returns a function that is the composition of the two arguments.</p>
+
+<pre><code class="hljs python"><span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">composer</span><span class="hljs-params">(func1, func2)</span>:</span>
+    <span class="hljs-string">"""Return a function f, such that f(x) = func1(func2(x))."""</span>
+    <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">f</span><span class="hljs-params">(x)</span>:</span>
+        <span class="hljs-keyword">return</span> func1(func2(x))
+    <span class="hljs-keyword">return</span> f</code></pre>
+
+<p>HOFs are powerful abstraction tools that allow us to express certain general
+patterns as named concepts in our programs.</p>
+
+
+<h1 id="hofs-in-environment-diagrams">HOFs in Environment Diagrams</h1>
+
+
+<p>An <strong>environment diagram</strong> keeps track of all the variables that
+have been defined and the values they are bound to. However, values are not
+necessarily only integers and strings. Environment diagrams can model more
+complex programs that utilize higher order functions.</p>
+
+
+            <iframe width="800" height="380" frameborder="0" src="./Discussion 2 _ CS 61A Fall 2022_files/iframe-embed(3).html">
+            </iframe>
+        
+
+<p>Lambdas are represented similarly to functions in environment diagrams, but
+since they lack instrinsic names, the lambda symbol (λ) is used instead.</p>
+
+<p>The parent of any function (including lambdas) is always the frame in which
+the function is defined. It is useful to include the parent in environment
+diagrams in order to find variables that are not defined in the current
+frame. In the previous example, when we call <code>add_two</code> (which is really the
+lambda function), we need to know what <code>x</code> is in order to compute <code>x + y</code>.
+Since <code>x</code> is not in the frame <code>f2</code>, we look at the frame’s parent, which is
+<code>f1</code>. There, we find <code>x</code> is bound to 2.</p>
+
+<p>As illustrated above, higher order functions that return a function have
+their return value represented with a pointer to the function object.</p>
+
+<div class="page-break"></div>
+
+
+<h3 id="q4-make-adder">Q4: Make Adder</h3>
+
+
+<p>Draw the environment diagram for the following code:</p>
+
+
+            
+<pre><code class="hljs python">n = <span class="hljs-number">9</span>
+<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">make_adder</span><span class="hljs-params">(n)</span>:</span>
+    <span class="hljs-keyword">return</span> <span class="hljs-keyword">lambda</span> k: k + n
+add_ten = make_adder(n+<span class="hljs-number">1</span>)
+result = add_ten(n)</code></pre>
+
+            <b>Your Answer</b>
+            
+<pre><code class="hljs python">n = <span class="hljs-number">9</span>
+<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">make_adder</span><span class="hljs-params">(n)</span>:</span>
+    <span class="hljs-keyword">return</span> <span class="hljs-keyword">lambda</span> k: k + n
+add_ten = make_adder(n+<span class="hljs-number">1</span>)
+result = add_ten(n)</code></pre>
+
+        <div class="env-diagram" id="env-diagram-make-adder-diagram">
+          <div class="env-diagram-objects">
+            <div>Objects</div>
+            <ul><li>
+            <button class="env-diagram-connector" id="env-diagram-make-adder-diagram-object0-connector">▶</button>
+            <input class="env-text-storable" id="env-diagram-make-adder-diagram-object0-value" type="text">
+            </li><li>
+            <button class="env-diagram-connector" id="env-diagram-make-adder-diagram-object1-connector">▶</button>
+            <input class="env-text-storable" id="env-diagram-make-adder-diagram-object1-value" type="text">
+            </li>
+            <li><button class="env-diagram-trash" title="Click here to remove a binding">🗑️</button></li>
+            </ul>
+        </div>
+          <div class="env-diagram-frame">
+                <div>Global frame</div>
+                <table class="table">
+                    <tbody>
+                    
+                <tr>
+                    <td><input type="text" class="env-text-storable" id="env-diagram-make-adder-diagram-frame0-binding0-name"></td>
+                    <td><input type="text" class="env-text-storable" id="env-diagram-make-adder-diagram-frame0-binding0-value">
+                <button class="env-diagram-connector" id="env-diagram-make-adder-diagram-frame0-binding0-connector">⬤
+                </button>
+            </td>
+                </tr>
+            
+                <tr>
+                    <td><input type="text" class="env-text-storable" id="env-diagram-make-adder-diagram-frame0-binding1-name"></td>
+                    <td><input type="text" class="env-text-storable" id="env-diagram-make-adder-diagram-frame0-binding1-value">
+                <button class="env-diagram-connector" id="env-diagram-make-adder-diagram-frame0-binding1-connector">⬤
+                </button>
+            </td>
+                </tr>
+            
+                <tr>
+                    <td><input type="text" class="env-text-storable" id="env-diagram-make-adder-diagram-frame0-binding2-name"></td>
+                    <td><input type="text" class="env-text-storable" id="env-diagram-make-adder-diagram-frame0-binding2-value">
+                <button class="env-diagram-connector" id="env-diagram-make-adder-diagram-frame0-binding2-connector">⬤
+                </button>
+            </td>
+                </tr>
+            
+                <tr>
+                    <td><input type="text" class="env-text-storable" id="env-diagram-make-adder-diagram-frame0-binding3-name"></td>
+                    <td><input type="text" class="env-text-storable" id="env-diagram-make-adder-diagram-frame0-binding3-value">
+                <button class="env-diagram-connector" id="env-diagram-make-adder-diagram-frame0-binding3-connector">⬤
+                </button>
+            </td>
+                </tr>
+            
+                    
+                    </tbody>
+                </table>
+            </div><div class="env-diagram-frame">
+                
+                <div>
+                f1: <input type="text" class="env-text-storable" id="env-diagram-make-adder-diagram-frame1-funcname">
+                [parent=<input type="text" class="env-text-storable" id="env-diagram-make-adder-diagram-frame1-parent">]
+                </div>
+            
+                <table class="table">
+                    <tbody>
+                    
+                <tr>
+                    <td><input type="text" class="env-text-storable" id="env-diagram-make-adder-diagram-frame1-binding0-name"></td>
+                    <td><input type="text" class="env-text-storable" id="env-diagram-make-adder-diagram-frame1-binding0-value">
+                <button class="env-diagram-connector" id="env-diagram-make-adder-diagram-frame1-binding0-connector">⬤
+                </button>
+            </td>
+                </tr>
+            
+                    
+                <tr>
+                    <td>Return value</td>
+                    <td><input type="text" class="env-text-storable" id="env-diagram-make-adder-diagram-frame1-return">
+                <button class="env-diagram-connector" id="env-diagram-make-adder-diagram-frame1-return-connector">⬤
+                </button>
+            </td>
+                </tr>
+                
+                    </tbody>
+                </table>
+            </div><div class="env-diagram-frame">
+                
+                <div>
+                f2: <input type="text" class="env-text-storable" id="env-diagram-make-adder-diagram-frame2-funcname">
+                [parent=<input type="text" class="env-text-storable" id="env-diagram-make-adder-diagram-frame2-parent">]
+                </div>
+            
+                <table class="table">
+                    <tbody>
+                    
+                <tr>
+                    <td><input type="text" class="env-text-storable" id="env-diagram-make-adder-diagram-frame2-binding0-name"></td>
+                    <td><input type="text" class="env-text-storable" id="env-diagram-make-adder-diagram-frame2-binding0-value">
+                <button class="env-diagram-connector" id="env-diagram-make-adder-diagram-frame2-binding0-connector">⬤
+                </button>
+            </td>
+                </tr>
+            
+                    
+                <tr>
+                    <td>Return value</td>
+                    <td><input type="text" class="env-text-storable" id="env-diagram-make-adder-diagram-frame2-return">
+                <button class="env-diagram-connector" id="env-diagram-make-adder-diagram-frame2-return-connector">⬤
+                </button>
+            </td>
+                </tr>
+                
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="storable-status"></div>
+        
+            <div class="sol-highlight">
+                <b>Solution</b>
+                
+            <iframe width="800" height="514" frameborder="0" src="./Discussion 2 _ CS 61A Fall 2022_files/iframe-embed(4).html">
+            </iframe>
+        
+            </div>
+        
+
+<p>There are 3 frames total (including the Global frame).
+In addition, consider the following questions:</p>
+
+<ol>
+  <li>In the Global frame, the name <code>add_ten</code> points to a function object. What is
+  the intrinsic name of that function object, and what frame is its parent?</li>
+  <li>What name is frame <code>f2</code> labeled with (<code>add_ten</code> or λ)?
+  Which frame is the parent of <code>f2</code>?</li>
+  <li>What value is the variable <code>result</code> bound to in the Global frame?</li>
+</ol>
+
+<div class="sol-highlight">
+
+<p>You can try out the environment diagram at <a href="http://tutor.cs61a.org/">tutor.cs61a.org</a>.
+To see the environment diagram for this question, click <a href="https://goo.gl/axdNj5">here</a>.</p>
+
+<ol>
+  <li>The intrinsic name of the function object that <code>add_ten</code> points to is
+  λ (specifically, the lambda whose parameter is <code>k</code>). The parent frame
+  of this lambda is <code>f1</code>.</li>
+  <li><code>f2</code> is labeled with the name λ. The parent frame of <code>f2</code> is <code>f1</code>,
+  since that is where λ is defined.</li>
+  <li>The variable <code>result</code> is bound to 19.</li>
+</ol>
+
+</div>
+
+
+<h3 id="q5-make-keeper">Q5: Make Keeper</h3>
+
+
+<p>Write a function that takes in a number <code>n</code> and returns a function
+that can take in a single parameter <code>cond</code>. When we pass in some condition
+function <code>cond</code> into this returned function, it will print out numbers from
+1 to <code>n</code> where calling <code>cond</code> on that number returns <code>True</code>.</p>
+
+
+            
+            <b>Your Answer</b>
+            
+            <div class="monaco-storable" id="make_keeper-input" style="height:378px;" data-keybinding-context="1" data-mode-id="python"><div class="monaco-editor no-user-select  showUnused vs-dark" data-uri="inmemory://model/1" style="width: 1021px; height: 378px;"><div data-mprt="3" class="overflow-guard" style="width: 1021px; height: 378px;"><div class="margin" role="presentation" aria-hidden="true" style="position: absolute; transform: translate3d(0px, 0px, 0px); contain: strict; top: 0px; height: 378px; width: 64px;"><div class="glyph-margin" style="left: 0px; width: 0px; height: 378px;"></div><div class="margin-view-zones" role="presentation" aria-hidden="true" style="position: absolute;"></div><div class="margin-view-overlays" role="presentation" aria-hidden="true" style="position: absolute; width: 64px; font-family: Consolas, &quot;Courier New&quot;, monospace; font-weight: normal; font-size: 14px; font-feature-settings: &quot;liga&quot; 0, &quot;calt&quot; 0; line-height: 19px; letter-spacing: 0px; height: 378px;"><div style="position:absolute;top:0px;width:100%;height:19px;"><div class="cldr codicon codicon-chevron-down" style="left:38px;width:26px;"></div><div class="line-numbers" style="left:0px;width:38px;">1</div></div><div style="position:absolute;top:19px;width:100%;height:19px;"><div class="line-numbers" style="left:0px;width:38px;">2</div></div><div style="position:absolute;top:38px;width:100%;height:19px;"><div class="line-numbers" style="left:0px;width:38px;">3</div></div><div style="position:absolute;top:57px;width:100%;height:19px;"><div class="line-numbers" style="left:0px;width:38px;">4</div></div><div style="position:absolute;top:76px;width:100%;height:19px;"><div class="line-numbers" style="left:0px;width:38px;">5</div></div><div style="position:absolute;top:95px;width:100%;height:19px;"><div class="line-numbers" style="left:0px;width:38px;">6</div></div><div style="position:absolute;top:114px;width:100%;height:19px;"><div class="line-numbers" style="left:0px;width:38px;">7</div></div><div style="position:absolute;top:133px;width:100%;height:19px;"><div class="line-numbers" style="left:0px;width:38px;">8</div></div><div style="position:absolute;top:152px;width:100%;height:19px;"><div class="line-numbers" style="left:0px;width:38px;">9</div></div><div style="position:absolute;top:171px;width:100%;height:19px;"><div class="line-numbers" style="left:0px;width:38px;">10</div></div><div style="position:absolute;top:190px;width:100%;height:19px;"><div class="line-numbers" style="left:0px;width:38px;">11</div></div><div style="position:absolute;top:209px;width:100%;height:19px;"><div class="line-numbers" style="left:0px;width:38px;">12</div></div><div style="position:absolute;top:228px;width:100%;height:19px;"><div class="cldr codicon codicon-chevron-down" style="left:38px;width:26px;"></div><div class="line-numbers" style="left:0px;width:38px;">13</div></div><div style="position:absolute;top:247px;width:100%;height:19px;"><div class="cldr codicon codicon-chevron-down" style="left:38px;width:26px;"></div><div class="line-numbers" style="left:0px;width:38px;">14</div></div><div style="position:absolute;top:266px;width:100%;height:19px;"><div class="line-numbers" style="left:0px;width:38px;">15</div></div><div style="position:absolute;top:285px;width:100%;height:19px;"><div class="line-numbers" style="left:0px;width:38px;">16</div></div><div style="position:absolute;top:304px;width:100%;height:19px;"><div class="line-numbers" style="left:0px;width:38px;">17</div></div></div></div><div class="monaco-scrollable-element editor-scrollable vs-dark" role="presentation" data-mprt="5" style="position: absolute; overflow: hidden; left: 64px; width: 957px; height: 378px;"><div class="lines-content monaco-editor-background" style="position: absolute; overflow: hidden; width: 1e+06px; height: 1e+06px; transform: translate3d(0px, 0px, 0px); contain: strict; top: 0px; left: 0px;"><div class="view-overlays" role="presentation" aria-hidden="true" style="position: absolute; height: 0px; width: 957px;"><div style="position:absolute;top:0px;width:100%;height:19px;"><div class="current-line" style="width:957px; height:19px;"></div></div><div style="position:absolute;top:19px;width:100%;height:19px;"><div class="cigr" style="left:0px;height:19px;width:30.796875px"></div></div><div style="position:absolute;top:38px;width:100%;height:19px;"><div class="cigr" style="left:0px;height:19px;width:30.796875px"></div></div><div style="position:absolute;top:57px;width:100%;height:19px;"><div class="cigr" style="left:0px;height:19px;width:30.796875px"></div></div><div style="position:absolute;top:76px;width:100%;height:19px;"><div class="cigr" style="left:0px;height:19px;width:30.796875px"></div></div><div style="position:absolute;top:95px;width:100%;height:19px;"><div class="cigr" style="left:0px;height:19px;width:30.796875px"></div></div><div style="position:absolute;top:114px;width:100%;height:19px;"><div class="cigr" style="left:0px;height:19px;width:30.796875px"></div></div><div style="position:absolute;top:133px;width:100%;height:19px;"><div class="cigr" style="left:0px;height:19px;width:30.796875px"></div></div><div style="position:absolute;top:152px;width:100%;height:19px;"><div class="cigr" style="left:0px;height:19px;width:30.796875px"></div></div><div style="position:absolute;top:171px;width:100%;height:19px;"><div class="cigr" style="left:0px;height:19px;width:30.796875px"></div></div><div style="position:absolute;top:190px;width:100%;height:19px;"><div class="cigr" style="left:0px;height:19px;width:30.796875px"></div></div><div style="position:absolute;top:209px;width:100%;height:19px;"><div class="cigr" style="left:0px;height:19px;width:30.796875px"></div></div><div style="position:absolute;top:228px;width:100%;height:19px;"><div class="cigr" style="left:0px;height:19px;width:30.796875px"></div></div><div style="position:absolute;top:247px;width:100%;height:19px;"><div class="cigr" style="left:0px;height:19px;width:30.796875px"></div><div class="cigr" style="left:30.796875px;height:19px;width:30.796875px"></div></div><div style="position:absolute;top:266px;width:100%;height:19px;"><div class="cigr" style="left:0px;height:19px;width:30.796875px"></div><div class="cigr" style="left:30.796875px;height:19px;width:30.796875px"></div><div class="cigr" style="left:61.59375px;height:19px;width:30.796875px"></div></div><div style="position:absolute;top:285px;width:100%;height:19px;"></div><div style="position:absolute;top:304px;width:100%;height:19px;"></div></div><div role="presentation" aria-hidden="true" class="view-rulers"></div><div class="view-zones" role="presentation" aria-hidden="true" style="position: absolute;"></div><div class="view-lines" role="presentation" aria-hidden="true" data-mprt="7" style="position: absolute; font-family: Consolas, &quot;Courier New&quot;, monospace; font-weight: normal; font-size: 14px; font-feature-settings: &quot;liga&quot; 0, &quot;calt&quot; 0; line-height: 19px; letter-spacing: 0px; width: 957px; height: 378px;"><div style="top:0px;height:19px;" class="view-line"><span><span class="mtk8">def</span><span class="mtk1">&nbsp;make_keeper</span><span class="mtk9">(</span><span class="mtk1">n</span><span class="mtk9">):</span></span></div><div style="top:19px;height:19px;" class="view-line"><span><span class="mtk1">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="mtk5">"""Returns&nbsp;a&nbsp;function&nbsp;which&nbsp;takes&nbsp;one&nbsp;parameter&nbsp;co</span><span class="mtk5">nd&nbsp;and&nbsp;prints</span></span></div><div style="top:38px;height:19px;" class="view-line"><span><span class="mtk5">&nbsp;&nbsp;&nbsp;&nbsp;out&nbsp;all&nbsp;integers&nbsp;1..i..n&nbsp;where&nbsp;calling&nbsp;cond(i)</span><span class="mtk5">&nbsp;returns&nbsp;True.</span></span></div><div style="top:57px;height:19px;" class="view-line"><span><span>&nbsp;</span></span></div><div style="top:76px;height:19px;" class="view-line"><span><span class="mtk5">&nbsp;&nbsp;&nbsp;&nbsp;&gt;&gt;&gt;&nbsp;def&nbsp;is_even(x):</span></span></div><div style="top:95px;height:19px;" class="view-line"><span><span class="mtk5">&nbsp;&nbsp;&nbsp;&nbsp;...&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;#&nbsp;Even&nbsp;numbers&nbsp;have&nbsp;remainder&nbsp;0&nbsp;when&nbsp;d</span><span class="mtk5">ivided&nbsp;by&nbsp;2.</span></span></div><div style="top:114px;height:19px;" class="view-line"><span><span class="mtk5">&nbsp;&nbsp;&nbsp;&nbsp;...&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return&nbsp;x&nbsp;%&nbsp;2&nbsp;==&nbsp;0</span></span></div><div style="top:133px;height:19px;" class="view-line"><span><span class="mtk5">&nbsp;&nbsp;&nbsp;&nbsp;&gt;&gt;&gt;&nbsp;make_keeper(5)(is_even)</span></span></div><div style="top:152px;height:19px;" class="view-line"><span><span class="mtk5">&nbsp;&nbsp;&nbsp;&nbsp;2</span></span></div><div style="top:171px;height:19px;" class="view-line"><span><span class="mtk5">&nbsp;&nbsp;&nbsp;&nbsp;4</span></span></div><div style="top:190px;height:19px;" class="view-line"><span><span class="mtk5">&nbsp;&nbsp;&nbsp;&nbsp;"""</span></span></div><div style="top:209px;height:19px;" class="view-line"><span><span class="mtk1">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="mtk5">"***&nbsp;YOUR&nbsp;CODE&nbsp;HERE&nbsp;***"</span></span></div><div style="top:228px;height:19px;" class="view-line"><span><span class="mtk1">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="mtk8">for</span><span class="mtk1">&nbsp;i&nbsp;</span><span class="mtk8">in</span><span class="mtk1">&nbsp;</span><span class="mtk8">range</span><span class="mtk9">(</span><span class="mtk6">1</span><span class="mtk9">,</span><span class="mtk1">n+</span><span class="mtk6">1</span><span class="mtk9">):</span></span></div><div style="top:247px;height:19px;" class="view-line"><span><span class="mtk1">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="mtk8">if</span><span class="mtk1">&nbsp;cond</span><span class="mtk9">(</span><span class="mtk1">i</span><span class="mtk9">):</span></span></div><div style="top:266px;height:19px;" class="view-line"><span><span class="mtk1">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="mtk8">print</span><span class="mtk9">(</span><span class="mtk1">i</span><span class="mtk9">)</span></span></div><div style="top:285px;height:19px;" class="view-line"><span><span>&nbsp;</span></span></div><div style="top:304px;height:19px;" class="view-line"><span><span>&nbsp;</span></span></div></div><div data-mprt="1" class="contentWidgets" style="position: absolute; top: 0px;"></div><div role="presentation" aria-hidden="true" class="cursors-layer cursor-line-style cursor-solid"><div class="cursor " style="height: 19px; top: 0px; left: 0px; font-family: Consolas, &quot;Courier New&quot;, monospace; font-weight: normal; font-size: 14px; font-feature-settings: &quot;liga&quot; 0, &quot;calt&quot; 0; line-height: 19px; letter-spacing: 0px; display: block; visibility: hidden; width: 2px;"></div></div></div><div role="presentation" aria-hidden="true" class="invisible scrollbar horizontal" style="position: absolute; width: 943px; height: 10px; left: 0px; bottom: 0px;"><div class="slider" style="position: absolute; top: 0px; left: 0px; height: 10px; transform: translate3d(0px, 0px, 0px); contain: strict; width: 943px;"></div></div><canvas class="decorationsOverviewRuler" aria-hidden="true" width="21" height="567" style="position: absolute; transform: translate3d(0px, 0px, 0px); contain: strict; top: 0px; right: 0px; width: 14px; height: 378px;"></canvas><div role="presentation" aria-hidden="true" class="invisible scrollbar vertical" style="position: absolute; width: 14px; height: 378px; right: 0px; top: 0px;"><div class="slider" style="position: absolute; top: 0px; left: 0px; width: 14px; transform: translate3d(0px, 0px, 0px); contain: strict; height: 378px;"></div></div></div><div role="presentation" aria-hidden="true" style="width: 1021px;"></div><textarea data-mprt="6" class="inputarea" wrap="off" autocorrect="off" autocapitalize="off" autocomplete="off" spellcheck="false" aria-label="Editor content;Press Alt+F1 for Accessibility Options." role="textbox" aria-multiline="true" aria-haspopup="false" aria-autocomplete="both" style="font-family: Consolas, &quot;Courier New&quot;, monospace; font-weight: normal; font-size: 14px; font-feature-settings: &quot;liga&quot; 0, &quot;calt&quot; 0; line-height: 19px; letter-spacing: 0px; top: 0px; left: 64px; width: 1px; height: 1px;"></textarea><div style="position: absolute; top: 0px; left: 0px; width: 0px; height: 0px;"></div><div data-mprt="4" class="overlayWidgets" style="width: 1021px;"><div class="accessibilityHelpWidget" role="dialog" aria-hidden="true" widgetid="editor.contrib.accessibilityHelpWidget" style="display: none; position: absolute;"><div role="document"></div></div><div class="monaco-editor-hover hidden" aria-hidden="true" role="presentation" widgetid="editor.contrib.modesGlyphHoverWidget" style="position: absolute;"></div></div><div data-mprt="8" class="minimap slider-mouseover" role="presentation" aria-hidden="true" style="position: absolute; left: 0px; width: 0px; height: 378px;"><div class="minimap-shadow-hidden" style="height: 378px;"></div><canvas width="0" height="567" style="position: absolute; left: 0px; width: 0px; height: 378px;"></canvas><canvas class="minimap-decorations-layer" width="0" height="567" style="position: absolute; left: 0px; width: 0px; height: 378px;"></canvas><div class="minimap-slider" style="position: absolute; transform: translate3d(0px, 0px, 0px); contain: strict; width: 0px;"><div class="minimap-slider-horizontal" style="position: absolute; width: 0px; height: 0px;"></div></div></div></div><div data-mprt="2" class="overflowingContentWidgets"><div class="monaco-editor rename-box" widgetid="__renameInputWidget" style="background-color: rgb(37, 37, 38); box-shadow: rgb(0, 0, 0) 0px 2px 8px; color: rgb(204, 204, 204); position: absolute; visibility: hidden; max-width: 1707px;"><input class="rename-input" type="text" aria-label="Rename input. Type new name and press Enter to commit." style="font-family: Consolas, &quot;Courier New&quot;, monospace; font-weight: normal; font-size: 14px; background-color: rgb(60, 60, 60); border-width: 0px; border-style: none;"><div class="rename-label" style="font-size: 11.2px;">Enter to Rename, Shift+Enter to Preview</div></div><div class="editor-widget suggest-widget" widgetid="editor.widget.suggestWidget" style="position: absolute; visibility: inherit; max-width: 1707px; top: 285px; left: 210px; line-height: 19px;" monaco-visible-content-widget="true"><div class="message" aria-hidden="true" style="display: none; background-color: rgb(37, 37, 38); border-color: rgb(69, 69, 69);"></div><div class="tree" style="background-color: rgb(37, 37, 38); border-color: rgb(69, 69, 69); height: 76px; display: none;" aria-hidden="true"><div class="monaco-list list_id_1 selection-none" tabindex="0" role="tree"><div class="monaco-scrollable-element " role="presentation" style="position: relative; overflow: hidden;"><div class="monaco-list-rows" style="transform: translate3d(0px, 0px, 0px); overflow: hidden; height: 0px; left: 0px; top: 0px;"></div><div role="presentation" aria-hidden="true" class="invisible scrollbar horizontal" style="position: absolute; width: 0px; height: 0px; left: 0px; bottom: 0px;"><div class="slider" style="position: absolute; top: 0px; left: 0px; height: 10px; transform: translate3d(0px, 0px, 0px); contain: strict; width: 0px;"></div></div><div role="presentation" aria-hidden="true" class="invisible scrollbar vertical" style="position: absolute; width: 10px; height: 76px; right: 0px; top: 0px;"><div class="slider" style="position: absolute; top: 0px; left: 0px; width: 10px; transform: translate3d(0px, 0px, 0px); contain: strict; height: 76px;"></div></div></div><style type="text/css" media="screen">.monaco-list.list_id_1:focus .monaco-list-row.focused { background-color: #062f4a; }
+.monaco-list.list_id_1:focus .monaco-list-row.focused:hover { background-color: #062f4a; }
+.monaco-list.list_id_1:focus .monaco-list-row.selected { background-color: #084066; }
+.monaco-list.list_id_1:focus .monaco-list-row.selected:hover { background-color: #084066; }
+.monaco-list.list_id_1:focus .monaco-list-row.selected { color: #ffffff; }
+
+				.monaco-drag-image,
+				.monaco-list.list_id_1:focus .monaco-list-row.selected.focused { background-color: #094771; }
+			
+
+				.monaco-drag-image,
+				.monaco-list.list_id_1:focus .monaco-list-row.selected.focused { color: #ffffff; }
+			
+.monaco-list.list_id_1 .monaco-list-row.focused { background-color:  #062f4a; }
+.monaco-list.list_id_1 .monaco-list-row.focused:hover { background-color:  #062f4a; }
+.monaco-list.list_id_1 .monaco-list-row.selected { background-color:  #37373d; }
+.monaco-list.list_id_1 .monaco-list-row.selected:hover { background-color:  #37373d; }
+.monaco-list.list_id_1:not(.drop-target) .monaco-list-row:hover:not(.selected):not(.focused) { background-color:  #2a2d2e; }
+
+				.monaco-list.list_id_1.drop-target,
+				.monaco-list.list_id_1 .monaco-list-rows.drop-target,
+				.monaco-list.list_id_1 .monaco-list-row.drop-target { background-color: #062f4a !important; color: inherit !important; }
+			
+.monaco-list-type-filter { background-color: #653723 }
+.monaco-list-type-filter { border: 1px solid rgba(0, 0, 0, 0); }
+.monaco-list-type-filter.no-matches { border: 1px solid #be1100; }
+.monaco-list-type-filter { box-shadow: 1px 1px 1px #000000; }</style></div></div><div class="suggest-status-bar" style="background-color: rgb(37, 37, 38); border-color: rgb(69, 69, 69); top: 76px; display: none;" aria-hidden="true"><span>Enter to accept</span><span></span></div><div class="details" aria-hidden="true" style="font-size: 14px; font-weight: normal; font-feature-settings: &quot;liga&quot; 0, &quot;calt&quot; 0; display: none; background-color: rgb(37, 37, 38); border-color: rgb(69, 69, 69);"><div class="monaco-scrollable-element " role="presentation" style="position: relative; overflow: hidden;"><div class="body" style="overflow: hidden;"><div class="header"><span class="codicon codicon-close" title="Read less...Ctrl+Space" style="height: 19px; width: 19px;"></span><p class="type" style="font-family: Consolas, &quot;Courier New&quot;, monospace;"></p></div><p class="docs"></p></div><div role="presentation" aria-hidden="true" class="invisible scrollbar horizontal" style="position: absolute;"><div class="slider" style="position: absolute; top: 0px; left: 0px; height: 10px; transform: translate3d(0px, 0px, 0px); contain: strict;"></div></div><div role="presentation" aria-hidden="true" class="invisible scrollbar vertical" style="position: absolute;"><div class="slider" style="position: absolute; top: 0px; left: 0px; width: 10px; transform: translate3d(0px, 0px, 0px); contain: strict;"></div></div><div class="shadow"></div><div class="shadow"></div><div class="shadow top-left-corner"></div></div></div></div><div class="monaco-editor-hover hidden" tabindex="0" widgetid="editor.contrib.modesContentHoverWidget" style="position: absolute; visibility: hidden; max-width: 1707px;"><div class="monaco-scrollable-element " role="presentation" style="position: relative; overflow: hidden;"><div class="monaco-editor-hover-content" style="overflow: hidden; font-size: 14px; line-height: 19px; max-height: 250px; max-width: 673.86px;"></div><div role="presentation" aria-hidden="true" class="invisible scrollbar horizontal" style="position: absolute;"><div class="slider" style="position: absolute; top: 0px; left: 0px; height: 10px; transform: translate3d(0px, 0px, 0px); contain: strict;"></div></div><div role="presentation" aria-hidden="true" class="invisible scrollbar vertical" style="position: absolute;"><div class="slider" style="position: absolute; top: 0px; left: 0px; width: 10px; transform: translate3d(0px, 0px, 0px); contain: strict;"></div></div><div class="shadow"></div><div class="shadow"></div><div class="shadow top-left-corner"></div></div></div></div><div class="context-view" aria-hidden="true" style="display: none;"></div></div></div>
+            <a href="javascript:void" id="modal-link-make_keeper-input">Run in 61A Code</a>
+            <div class="modal fade in" id="modal-make_keeper-input" tabindex="-1" role="dialog" style="display: block;">
+                <div class="modal-dialog modal-lg" role="document">
+                    <div class="modal-content" style="padding-bottom: -5px">
+                    <iframe id="code-iframe-make_keeper-input" width="100%" height="700px" style="border: none; display:block;" src="./Discussion 2 _ CS 61A Fall 2022_files/saved_resource.html"></iframe>
+                    </div>
+                </div>
+            </div>
+            <div class="storable-status">Saved at Mon Dec 19 2022 15:10:15 GMT+0800 (中国标准时间).</div>
+            <script>
+                $(() => activateEditor('def make_keeper(n):\n    &quot;&quot;&quot;Returns a function which takes one parameter cond and prints\n    out all integers 1..i..n where calling cond(i) returns True.\n\n    &gt;&gt;&gt; def is_even(x):\n    ...     # Even numbers have remainder 0 when divided by 2.\n    ...     return x % 2 == 0\n    &gt;&gt;&gt; make_keeper(5)(is_even)\n    2\n    4\n    &quot;&quot;&quot;\n    "*** YOUR CODE HERE ***"\n\n', "python", "make_keeper-input"));
+            </script>
+        
+            <div class="sol-highlight">
+                <b>Solution</b>
+                
+<pre><code class="hljs python"><span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">make_keeper</span><span class="hljs-params">(n)</span>:</span>
+    <span class="hljs-string">"""Returns a function which takes one parameter cond and prints
+    out all integers 1..i..n where calling cond(i) returns True.
+
+    &gt;&gt;&gt; def is_even(x):
+    ...     # Even numbers have remainder 0 when divided by 2.
+    ...     return x % 2 == 0
+    &gt;&gt;&gt; make_keeper(5)(is_even)
+    2
+    4
+    """</span>
+    <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">do_keep</span><span class="hljs-params">(cond)</span>:</span>
+        i = <span class="hljs-number">1</span>
+        <span class="hljs-keyword">while</span> i &lt;= n:
+            <span class="hljs-keyword">if</span> cond(i):
+                print(i)
+            i += <span class="hljs-number">1</span>
+    <span class="hljs-keyword">return</span> do_keep
+</code></pre>
+
+            </div>
+        
+
+<div class="page-break"></div>
+
+
+<h1 id="hofs-and-lambdas">HOFs and Lambdas</h1>
+
+
+
+<h3 id="q6-make-your-own-lambdas">Q6: Make Your Own Lambdas</h3>
+
+
+<p>For each of the following expressions, write functions <code>f1</code>, <code>f2</code>,
+<code>f3</code>, and <code>f4</code> such that the evaluation of each expression
+succeeds, without causing an error. Be sure to use lambdas in your
+function definition instead of nested <code>def</code> statements. Each function
+should have a one line solution.</p>
+
+
+            
+            <b>Your Answer</b>
+            
+            <div class="monaco-storable" id="define_lambdas-input" style="height:540px;" data-keybinding-context="1" data-mode-id="python"><div class="monaco-editor no-user-select  showUnused vs-dark" data-uri="inmemory://model/2" style="width: 1021px; height: 540px;"><div data-mprt="3" class="overflow-guard" style="width: 1021px; height: 540px;"><div class="margin" role="presentation" aria-hidden="true" style="position: absolute; transform: translate3d(0px, 0px, 0px); contain: strict; top: 0px; height: 551px; width: 64px;"><div class="glyph-margin" style="left: 0px; width: 0px; height: 551px;"></div><div class="margin-view-zones" role="presentation" aria-hidden="true" style="position: absolute;"></div><div class="margin-view-overlays" role="presentation" aria-hidden="true" style="position: absolute; width: 64px; font-family: Consolas, &quot;Courier New&quot;, monospace; font-weight: normal; font-size: 14px; font-feature-settings: &quot;liga&quot; 0, &quot;calt&quot; 0; line-height: 19px; letter-spacing: 0px; height: 551px;"><div style="position:absolute;top:0px;width:100%;height:19px;"><div class="cldr codicon codicon-chevron-down" style="left:38px;width:26px;"></div><div class="line-numbers" style="left:0px;width:38px;">1</div></div><div style="position:absolute;top:19px;width:100%;height:19px;"><div class="line-numbers" style="left:0px;width:38px;">2</div></div><div style="position:absolute;top:38px;width:100%;height:19px;"><div class="line-numbers" style="left:0px;width:38px;">3</div></div><div style="position:absolute;top:57px;width:100%;height:19px;"><div class="line-numbers" style="left:0px;width:38px;">4</div></div><div style="position:absolute;top:76px;width:100%;height:19px;"><div class="line-numbers" style="left:0px;width:38px;">5</div></div><div style="position:absolute;top:95px;width:100%;height:19px;"><div class="line-numbers" style="left:0px;width:38px;">6</div></div><div style="position:absolute;top:114px;width:100%;height:19px;"><div class="line-numbers" style="left:0px;width:38px;">7</div></div><div style="position:absolute;top:133px;width:100%;height:19px;"><div class="cldr codicon codicon-chevron-down" style="left:38px;width:26px;"></div><div class="line-numbers" style="left:0px;width:38px;">8</div></div><div style="position:absolute;top:152px;width:100%;height:19px;"><div class="line-numbers" style="left:0px;width:38px;">9</div></div><div style="position:absolute;top:171px;width:100%;height:19px;"><div class="line-numbers" style="left:0px;width:38px;">10</div></div><div style="position:absolute;top:190px;width:100%;height:19px;"><div class="line-numbers" style="left:0px;width:38px;">11</div></div><div style="position:absolute;top:209px;width:100%;height:19px;"><div class="line-numbers" style="left:0px;width:38px;">12</div></div><div style="position:absolute;top:228px;width:100%;height:19px;"><div class="line-numbers" style="left:0px;width:38px;">13</div></div><div style="position:absolute;top:247px;width:100%;height:19px;"><div class="line-numbers" style="left:0px;width:38px;">14</div></div><div style="position:absolute;top:266px;width:100%;height:19px;"><div class="cldr codicon codicon-chevron-down" style="left:38px;width:26px;"></div><div class="line-numbers" style="left:0px;width:38px;">15</div></div><div style="position:absolute;top:285px;width:100%;height:19px;"><div class="line-numbers" style="left:0px;width:38px;">16</div></div><div style="position:absolute;top:304px;width:100%;height:19px;"><div class="line-numbers" style="left:0px;width:38px;">17</div></div><div style="position:absolute;top:323px;width:100%;height:19px;"><div class="line-numbers" style="left:0px;width:38px;">18</div></div><div style="position:absolute;top:342px;width:100%;height:19px;"><div class="line-numbers" style="left:0px;width:38px;">19</div></div><div style="position:absolute;top:361px;width:100%;height:19px;"><div class="line-numbers" style="left:0px;width:38px;">20</div></div><div style="position:absolute;top:380px;width:100%;height:19px;"><div class="line-numbers" style="left:0px;width:38px;">21</div></div><div style="position:absolute;top:399px;width:100%;height:19px;"><div class="cldr codicon codicon-chevron-down" style="left:38px;width:26px;"></div><div class="line-numbers" style="left:0px;width:38px;">22</div></div><div style="position:absolute;top:418px;width:100%;height:19px;"><div class="line-numbers" style="left:0px;width:38px;">23</div></div><div style="position:absolute;top:437px;width:100%;height:19px;"><div class="line-numbers" style="left:0px;width:38px;">24</div></div><div style="position:absolute;top:456px;width:100%;height:19px;"><div class="line-numbers" style="left:0px;width:38px;">25</div></div><div style="position:absolute;top:475px;width:100%;height:19px;"><div class="line-numbers" style="left:0px;width:38px;">26</div></div><div style="position:absolute;top:494px;width:100%;height:19px;"><div class="line-numbers" style="left:0px;width:38px;">27</div></div><div style="position:absolute;top:513px;width:100%;height:19px;"><div class="line-numbers" style="left:0px;width:38px;">28</div></div><div style="position:absolute;top:532px;width:100%;height:19px;"><div class="line-numbers" style="left:0px;width:38px;">29</div></div></div></div><div class="monaco-scrollable-element editor-scrollable vs-dark" role="presentation" data-mprt="5" style="position: absolute; overflow: hidden; left: 64px; width: 957px; height: 540px;"><div class="lines-content monaco-editor-background" style="position: absolute; overflow: hidden; width: 1e+06px; height: 1e+06px; transform: translate3d(0px, 0px, 0px); contain: strict; top: 0px; left: 0px;"><div class="view-overlays" role="presentation" aria-hidden="true" style="position: absolute; height: 0px; width: 957px;"><div style="position:absolute;top:0px;width:100%;height:19px;"></div><div style="position:absolute;top:19px;width:100%;height:19px;"><div class="cigr" style="left:0px;height:19px;width:30.796875px"></div></div><div style="position:absolute;top:38px;width:100%;height:19px;"><div class="cigr" style="left:0px;height:19px;width:30.796875px"></div></div><div style="position:absolute;top:57px;width:100%;height:19px;"><div class="cigr" style="left:0px;height:19px;width:30.796875px"></div></div><div style="position:absolute;top:76px;width:100%;height:19px;"><div class="cigr" style="left:0px;height:19px;width:30.796875px"></div></div><div style="position:absolute;top:95px;width:100%;height:19px;"><div class="cigr" style="left:0px;height:19px;width:30.796875px"></div></div><div style="position:absolute;top:114px;width:100%;height:19px;"></div><div style="position:absolute;top:133px;width:100%;height:19px;"></div><div style="position:absolute;top:152px;width:100%;height:19px;"><div class="cigr" style="left:0px;height:19px;width:30.796875px"></div></div><div style="position:absolute;top:171px;width:100%;height:19px;"><div class="cigr" style="left:0px;height:19px;width:30.796875px"></div></div><div style="position:absolute;top:190px;width:100%;height:19px;"><div class="cigr" style="left:0px;height:19px;width:30.796875px"></div></div><div style="position:absolute;top:209px;width:100%;height:19px;"><div class="cigr" style="left:0px;height:19px;width:30.796875px"></div></div><div style="position:absolute;top:228px;width:100%;height:19px;"><div class="cigr" style="left:0px;height:19px;width:30.796875px"></div></div><div style="position:absolute;top:247px;width:100%;height:19px;"></div><div style="position:absolute;top:266px;width:100%;height:19px;"></div><div style="position:absolute;top:285px;width:100%;height:19px;"><div class="cigr" style="left:0px;height:19px;width:30.796875px"></div></div><div style="position:absolute;top:304px;width:100%;height:19px;"><div class="cigr" style="left:0px;height:19px;width:30.796875px"></div></div><div style="position:absolute;top:323px;width:100%;height:19px;"><div class="cigr" style="left:0px;height:19px;width:30.796875px"></div></div><div style="position:absolute;top:342px;width:100%;height:19px;"><div class="cigr" style="left:0px;height:19px;width:30.796875px"></div></div><div style="position:absolute;top:361px;width:100%;height:19px;"><div class="cigr" style="left:0px;height:19px;width:30.796875px"></div></div><div style="position:absolute;top:380px;width:100%;height:19px;"></div><div style="position:absolute;top:399px;width:100%;height:19px;"></div><div style="position:absolute;top:418px;width:100%;height:19px;"><div class="cigr" style="left:0px;height:19px;width:30.796875px"></div></div><div style="position:absolute;top:437px;width:100%;height:19px;"><div class="cigr" style="left:0px;height:19px;width:30.796875px"></div></div><div style="position:absolute;top:456px;width:100%;height:19px;"><div class="cigr" style="left:0px;height:19px;width:30.796875px"></div></div><div style="position:absolute;top:475px;width:100%;height:19px;"><div class="cigr" style="left:0px;height:19px;width:30.796875px"></div></div><div style="position:absolute;top:494px;width:100%;height:19px;"><div class="cigr" style="left:0px;height:19px;width:30.796875px"></div></div><div style="position:absolute;top:513px;width:100%;height:19px;"></div><div style="position:absolute;top:532px;width:100%;height:19px;"></div></div><div role="presentation" aria-hidden="true" class="view-rulers"></div><div class="view-zones" role="presentation" aria-hidden="true" style="position: absolute;"></div><div class="view-lines" role="presentation" aria-hidden="true" data-mprt="7" style="position: absolute; font-family: Consolas, &quot;Courier New&quot;, monospace; font-weight: normal; font-size: 14px; font-feature-settings: &quot;liga&quot; 0, &quot;calt&quot; 0; line-height: 19px; letter-spacing: 0px; width: 957px; height: 551px;"><div style="top:0px;height:19px;" class="view-line"><span><span class="mtk8">def</span><span class="mtk1">&nbsp;f1</span><span class="mtk9">():</span></span></div><div style="top:19px;height:19px;" class="view-line"><span><span class="mtk1">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="mtk5">"""</span></span></div><div style="top:38px;height:19px;" class="view-line"><span><span class="mtk5">&nbsp;&nbsp;&nbsp;&nbsp;&gt;&gt;&gt;&nbsp;f1()</span></span></div><div style="top:57px;height:19px;" class="view-line"><span><span class="mtk5">&nbsp;&nbsp;&nbsp;&nbsp;3</span></span></div><div style="top:76px;height:19px;" class="view-line"><span><span class="mtk5">&nbsp;&nbsp;&nbsp;&nbsp;"""</span></span></div><div style="top:95px;height:19px;" class="view-line"><span><span class="mtk1">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="mtk5">"***&nbsp;YOUR&nbsp;CODE&nbsp;HERE&nbsp;***"</span></span></div><div style="top:114px;height:19px;" class="view-line"><span><span>&nbsp;</span></span></div><div style="top:133px;height:19px;" class="view-line"><span><span class="mtk8">def</span><span class="mtk1">&nbsp;f2</span><span class="mtk9">():</span></span></div><div style="top:152px;height:19px;" class="view-line"><span><span class="mtk1">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="mtk5">"""</span></span></div><div style="top:171px;height:19px;" class="view-line"><span><span class="mtk5">&nbsp;&nbsp;&nbsp;&nbsp;&gt;&gt;&gt;&nbsp;f2()()</span></span></div><div style="top:190px;height:19px;" class="view-line"><span><span class="mtk5">&nbsp;&nbsp;&nbsp;&nbsp;3</span></span></div><div style="top:209px;height:19px;" class="view-line"><span><span class="mtk5">&nbsp;&nbsp;&nbsp;&nbsp;"""</span></span></div><div style="top:228px;height:19px;" class="view-line"><span><span class="mtk1">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="mtk5">"***&nbsp;YOUR&nbsp;CODE&nbsp;HERE&nbsp;***"</span></span></div><div style="top:247px;height:19px;" class="view-line"><span><span>&nbsp;</span></span></div><div style="top:266px;height:19px;" class="view-line"><span><span class="mtk8">def</span><span class="mtk1">&nbsp;f3</span><span class="mtk9">():</span></span></div><div style="top:285px;height:19px;" class="view-line"><span><span class="mtk1">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="mtk5">"""</span></span></div><div style="top:304px;height:19px;" class="view-line"><span><span class="mtk5">&nbsp;&nbsp;&nbsp;&nbsp;&gt;&gt;&gt;&nbsp;f3()(3)</span></span></div><div style="top:323px;height:19px;" class="view-line"><span><span class="mtk5">&nbsp;&nbsp;&nbsp;&nbsp;3</span></span></div><div style="top:342px;height:19px;" class="view-line"><span><span class="mtk5">&nbsp;&nbsp;&nbsp;&nbsp;"""</span></span></div><div style="top:361px;height:19px;" class="view-line"><span><span class="mtk1">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="mtk5">"***&nbsp;YOUR&nbsp;CODE&nbsp;HERE&nbsp;***"</span></span></div><div style="top:380px;height:19px;" class="view-line"><span><span>&nbsp;</span></span></div><div style="top:399px;height:19px;" class="view-line"><span><span class="mtk8">def</span><span class="mtk1">&nbsp;f4</span><span class="mtk9">():</span></span></div><div style="top:418px;height:19px;" class="view-line"><span><span class="mtk1">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="mtk5">"""</span></span></div><div style="top:437px;height:19px;" class="view-line"><span><span class="mtk5">&nbsp;&nbsp;&nbsp;&nbsp;&gt;&gt;&gt;&nbsp;f4()()(3)()</span></span></div><div style="top:456px;height:19px;" class="view-line"><span><span class="mtk5">&nbsp;&nbsp;&nbsp;&nbsp;3</span></span></div><div style="top:475px;height:19px;" class="view-line"><span><span class="mtk5">&nbsp;&nbsp;&nbsp;&nbsp;"""</span></span></div><div style="top:494px;height:19px;" class="view-line"><span><span class="mtk1">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="mtk5">"***&nbsp;YOUR&nbsp;CODE&nbsp;HERE&nbsp;***"</span></span></div><div style="top:513px;height:19px;" class="view-line"><span><span>&nbsp;</span></span></div><div style="top:532px;height:19px;" class="view-line"><span><span>&nbsp;</span></span></div></div><div data-mprt="1" class="contentWidgets" style="position: absolute; top: 0px;"></div><div role="presentation" aria-hidden="true" class="cursors-layer cursor-line-style cursor-solid"><div class="cursor " style="height: 19px; top: 0px; left: 0px; font-family: Consolas, &quot;Courier New&quot;, monospace; font-weight: normal; font-size: 14px; font-feature-settings: &quot;liga&quot; 0, &quot;calt&quot; 0; line-height: 19px; letter-spacing: 0px; display: block; visibility: hidden; width: 2px;"></div></div></div><div role="presentation" aria-hidden="true" class="invisible scrollbar horizontal" style="position: absolute; width: 943px; height: 10px; left: 0px; bottom: 0px;"><div class="slider" style="position: absolute; top: 0px; left: 0px; height: 10px; transform: translate3d(0px, 0px, 0px); contain: strict; width: 943px;"></div></div><canvas class="decorationsOverviewRuler" aria-hidden="true" width="21" height="810" style="position: absolute; transform: translate3d(0px, 0px, 0px); contain: strict; top: 0px; right: 0px; width: 14px; height: 540px;"></canvas><div role="presentation" aria-hidden="true" class="invisible scrollbar vertical fade" style="position: absolute; width: 14px; height: 540px; right: 0px; top: 0px;"><div class="slider" style="position: absolute; top: 0px; left: 0px; width: 14px; transform: translate3d(0px, 0px, 0px); contain: strict; height: 529px;"></div></div></div><div role="presentation" aria-hidden="true" style="width: 1021px;"></div><textarea data-mprt="6" class="inputarea" wrap="off" autocorrect="off" autocapitalize="off" autocomplete="off" spellcheck="false" aria-label="Editor content;Press Alt+F1 for Accessibility Options." role="textbox" aria-multiline="true" aria-haspopup="false" aria-autocomplete="both" style="font-family: Consolas, &quot;Courier New&quot;, monospace; font-weight: normal; font-size: 14px; font-feature-settings: &quot;liga&quot; 0, &quot;calt&quot; 0; line-height: 19px; letter-spacing: 0px; top: 0px; left: 64px; width: 1px; height: 1px;"></textarea><div style="position: absolute; top: 0px; left: 0px; width: 0px; height: 0px;"></div><div data-mprt="4" class="overlayWidgets" style="width: 1021px;"><div class="accessibilityHelpWidget" role="dialog" aria-hidden="true" widgetid="editor.contrib.accessibilityHelpWidget" style="display: none; position: absolute;"><div role="document"></div></div><div class="monaco-editor-hover hidden" aria-hidden="true" role="presentation" widgetid="editor.contrib.modesGlyphHoverWidget" style="position: absolute;"></div></div><div data-mprt="8" class="minimap slider-mouseover" role="presentation" aria-hidden="true" style="position: absolute; left: 0px; width: 0px; height: 540px;"><div class="minimap-shadow-hidden" style="height: 540px;"></div><canvas width="0" height="810" style="position: absolute; left: 0px; width: 0px; height: 540px;"></canvas><canvas class="minimap-decorations-layer" width="0" height="810" style="position: absolute; left: 0px; width: 0px; height: 540px;"></canvas><div class="minimap-slider" style="position: absolute; transform: translate3d(0px, 0px, 0px); contain: strict; width: 0px;"><div class="minimap-slider-horizontal" style="position: absolute; width: 0px; height: 0px;"></div></div></div></div><div data-mprt="2" class="overflowingContentWidgets"><div class="monaco-editor rename-box" widgetid="__renameInputWidget" style="background-color: rgb(37, 37, 38); box-shadow: rgb(0, 0, 0) 0px 2px 8px; color: rgb(204, 204, 204); position: absolute; visibility: hidden; max-width: 1707px;"><input class="rename-input" type="text" aria-label="Rename input. Type new name and press Enter to commit." style="font-family: Consolas, &quot;Courier New&quot;, monospace; font-weight: normal; font-size: 14px; background-color: rgb(60, 60, 60); border-width: 0px; border-style: none;"><div class="rename-label" style="font-size: 11.2px;">Enter to Rename, Shift+Enter to Preview</div></div><div class="editor-widget suggest-widget" widgetid="editor.widget.suggestWidget" style="position: absolute; visibility: inherit; max-width: 1707px; top: 22px; left: 64px;" monaco-visible-content-widget="true"><div class="message" aria-hidden="true" style="display: none; background-color: rgb(37, 37, 38); border-color: rgb(69, 69, 69);"></div><div class="tree" aria-hidden="true" style="display: none; background-color: rgb(37, 37, 38); border-color: rgb(69, 69, 69);"><div class="monaco-list list_id_2" tabindex="0" role="tree"><div class="monaco-scrollable-element " role="presentation" style="position: relative; overflow: hidden;"><div class="monaco-list-rows" style="transform: translate3d(0px, 0px, 0px); overflow: hidden;"></div><div role="presentation" aria-hidden="true" class="invisible scrollbar horizontal" style="position: absolute;"><div class="slider" style="position: absolute; top: 0px; left: 0px; height: 10px; transform: translate3d(0px, 0px, 0px); contain: strict;"></div></div><div role="presentation" aria-hidden="true" class="invisible scrollbar vertical" style="position: absolute;"><div class="slider" style="position: absolute; top: 0px; left: 0px; width: 10px; transform: translate3d(0px, 0px, 0px); contain: strict;"></div></div></div><style type="text/css" media="screen">.monaco-list.list_id_2:focus .monaco-list-row.focused { background-color: #062f4a; }
+.monaco-list.list_id_2:focus .monaco-list-row.focused:hover { background-color: #062f4a; }
+.monaco-list.list_id_2:focus .monaco-list-row.selected { background-color: #084066; }
+.monaco-list.list_id_2:focus .monaco-list-row.selected:hover { background-color: #084066; }
+.monaco-list.list_id_2:focus .monaco-list-row.selected { color: #ffffff; }
+
+				.monaco-drag-image,
+				.monaco-list.list_id_2:focus .monaco-list-row.selected.focused { background-color: #094771; }
+			
+
+				.monaco-drag-image,
+				.monaco-list.list_id_2:focus .monaco-list-row.selected.focused { color: #ffffff; }
+			
+.monaco-list.list_id_2 .monaco-list-row.focused { background-color:  #062f4a; }
+.monaco-list.list_id_2 .monaco-list-row.focused:hover { background-color:  #062f4a; }
+.monaco-list.list_id_2 .monaco-list-row.selected { background-color:  #37373d; }
+.monaco-list.list_id_2 .monaco-list-row.selected:hover { background-color:  #37373d; }
+.monaco-list.list_id_2:not(.drop-target) .monaco-list-row:hover:not(.selected):not(.focused) { background-color:  #2a2d2e; }
+
+				.monaco-list.list_id_2.drop-target,
+				.monaco-list.list_id_2 .monaco-list-rows.drop-target,
+				.monaco-list.list_id_2 .monaco-list-row.drop-target { background-color: #062f4a !important; color: inherit !important; }
+			
+.monaco-list-type-filter { background-color: #653723 }
+.monaco-list-type-filter { border: 1px solid rgba(0, 0, 0, 0); }
+.monaco-list-type-filter.no-matches { border: 1px solid #be1100; }
+.monaco-list-type-filter { box-shadow: 1px 1px 1px #000000; }</style></div></div><div class="suggest-status-bar" aria-hidden="true" style="display: none; background-color: rgb(37, 37, 38); border-color: rgb(69, 69, 69);"><span></span><span></span></div><div class="details" aria-hidden="true" style="font-size: 14px; font-weight: normal; font-feature-settings: &quot;liga&quot; 0, &quot;calt&quot; 0; display: none; background-color: rgb(37, 37, 38); border-color: rgb(69, 69, 69);"><div class="monaco-scrollable-element " role="presentation" style="position: relative; overflow: hidden;"><div class="body" style="overflow: hidden;"><div class="header"><span class="codicon codicon-close" title="Read less...Ctrl+Space" style="height: 19px; width: 19px;"></span><p class="type" style="font-family: Consolas, &quot;Courier New&quot;, monospace;"></p></div><p class="docs"></p></div><div role="presentation" aria-hidden="true" class="invisible scrollbar horizontal" style="position: absolute;"><div class="slider" style="position: absolute; top: 0px; left: 0px; height: 10px; transform: translate3d(0px, 0px, 0px); contain: strict;"></div></div><div role="presentation" aria-hidden="true" class="invisible scrollbar vertical" style="position: absolute;"><div class="slider" style="position: absolute; top: 0px; left: 0px; width: 10px; transform: translate3d(0px, 0px, 0px); contain: strict;"></div></div><div class="shadow"></div><div class="shadow"></div><div class="shadow top-left-corner"></div></div></div></div><div class="monaco-editor-hover hidden" tabindex="0" widgetid="editor.contrib.modesContentHoverWidget" style="position: absolute; visibility: hidden; max-width: 1707px;"><div class="monaco-scrollable-element " role="presentation" style="position: relative; overflow: hidden;"><div class="monaco-editor-hover-content" style="overflow: hidden; font-size: 14px; line-height: 19px; max-height: 250px; max-width: 673.86px;"></div><div role="presentation" aria-hidden="true" class="invisible scrollbar horizontal" style="position: absolute;"><div class="slider" style="position: absolute; top: 0px; left: 0px; height: 10px; transform: translate3d(0px, 0px, 0px); contain: strict;"></div></div><div role="presentation" aria-hidden="true" class="invisible scrollbar vertical" style="position: absolute;"><div class="slider" style="position: absolute; top: 0px; left: 0px; width: 10px; transform: translate3d(0px, 0px, 0px); contain: strict;"></div></div><div class="shadow"></div><div class="shadow"></div><div class="shadow top-left-corner"></div></div></div></div><div class="context-view" aria-hidden="true" style="display: none;"></div></div></div>
+            <a href="javascript:void" id="modal-link-define_lambdas-input">Run in 61A Code</a>
+            <div class="modal fade" id="modal-define_lambdas-input" tabindex="-1" role="dialog">
+                <div class="modal-dialog modal-lg" role="document">
+                    <div class="modal-content" style="padding-bottom: -5px">
+                    <iframe id="code-iframe-define_lambdas-input" width="100%" height="700px" style="border: none; display:block;" src="./Discussion 2 _ CS 61A Fall 2022_files/saved_resource(1).html"></iframe>
+                    </div>
+                </div>
+            </div>
+            <div class="storable-status"></div>
+            <script>
+                $(() => activateEditor('def f1():\n    &quot;&quot;&quot;\n    &gt;&gt;&gt; f1()\n    3\n    &quot;&quot;&quot;\n    "*** YOUR CODE HERE ***"\n\ndef f2():\n    &quot;&quot;&quot;\n    &gt;&gt;&gt; f2()()\n    3\n    &quot;&quot;&quot;\n    "*** YOUR CODE HERE ***"\n\ndef f3():\n    &quot;&quot;&quot;\n    &gt;&gt;&gt; f3()(3)\n    3\n    &quot;&quot;&quot;\n    "*** YOUR CODE HERE ***"\n\ndef f4():\n    &quot;&quot;&quot;\n    &gt;&gt;&gt; f4()()(3)()\n    3\n    &quot;&quot;&quot;\n    "*** YOUR CODE HERE ***"\n\n', "python", "define_lambdas-input"));
+            </script>
+        
+            <div class="sol-highlight">
+                <b>Solution</b>
+                
+<pre><code class="hljs python"><span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">f1</span><span class="hljs-params">()</span>:</span>
+    <span class="hljs-string">"""
+    &gt;&gt;&gt; f1()
+    3
+    """</span>
+    <span class="hljs-keyword">return</span> <span class="hljs-number">3</span>
+
+<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">f2</span><span class="hljs-params">()</span>:</span>
+    <span class="hljs-string">"""
+    &gt;&gt;&gt; f2()()
+    3
+    """</span>
+    <span class="hljs-keyword">return</span> <span class="hljs-keyword">lambda</span>: <span class="hljs-number">3</span>
+
+<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">f3</span><span class="hljs-params">()</span>:</span>
+    <span class="hljs-string">"""
+    &gt;&gt;&gt; f3()(3)
+    3
+    """</span>
+    <span class="hljs-keyword">return</span> <span class="hljs-keyword">lambda</span> x: x
+
+<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">f4</span><span class="hljs-params">()</span>:</span>
+    <span class="hljs-string">"""
+    &gt;&gt;&gt; f4()()(3)()
+    3
+    """</span>
+    <span class="hljs-keyword">return</span> <span class="hljs-keyword">lambda</span>: <span class="hljs-keyword">lambda</span> x: <span class="hljs-keyword">lambda</span>: x
+</code></pre>
+
+            </div>
+        
+
+
+
+
+<h1 id="currying">Currying</h1>
+
+
+<p>One important application of HOFs is converting a function that takes
+multiple arguments into a chain of functions that each take a single
+argument. This is known as <strong>currying</strong>. For example, the function below
+converts the <code>pow</code> function into its curried form:</p>
+
+<pre><code class="hljs python"><span class="hljs-meta">&gt;&gt;&gt; </span><span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">curried_pow</span><span class="hljs-params">(x)</span>:</span>
+        <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">h</span><span class="hljs-params">(y)</span>:</span>
+            <span class="hljs-keyword">return</span> pow(x, y)
+        <span class="hljs-keyword">return</span> h
+
+<span class="hljs-meta">&gt;&gt;&gt; </span>curried_pow(<span class="hljs-number">2</span>)(<span class="hljs-number">3</span>)
+<span class="hljs-number">8</span></code></pre>
+
+<p>This is useful if, say, you needed to calculate a lot of powers of 2.
+Using the normal <code>pow</code> function, you would have to put in <code>2</code> as the first
+argument for every function call:</p>
+
+<pre><code class="hljs python"><span class="hljs-meta">&gt;&gt;&gt; </span>pow(<span class="hljs-number">2</span>, <span class="hljs-number">3</span>)
+<span class="hljs-number">8</span>
+<span class="hljs-meta">&gt;&gt;&gt; </span>pow(<span class="hljs-number">2</span>, <span class="hljs-number">4</span>)
+<span class="hljs-number">16</span>
+<span class="hljs-meta">&gt;&gt;&gt; </span>pow(<span class="hljs-number">2</span>, <span class="hljs-number">10</span>)
+<span class="hljs-number">1024</span></code></pre>
+
+<p>With <code>curried_pow</code>, however, you can create a one-argument function specialized for taking powers of 2 one time, and then keep using that function for taking powers of 2:</p>
+
+<pre><code class="hljs python"><span class="hljs-meta">&gt;&gt;&gt; </span>pow_2 = curried_pow(<span class="hljs-number">2</span>)
+<span class="hljs-meta">&gt;&gt;&gt; </span>pow_2(<span class="hljs-number">3</span>)
+<span class="hljs-number">8</span>
+<span class="hljs-meta">&gt;&gt;&gt; </span>pow_2(<span class="hljs-number">4</span>)
+<span class="hljs-number">16</span>
+<span class="hljs-meta">&gt;&gt;&gt; </span>pow_2(<span class="hljs-number">10</span>)
+<span class="hljs-number">1024</span></code></pre>
+
+<p>This way, you don't have to put <code>2</code> in as an argument for every call! If instead you wanted to take powers
+of 3, you could quickly make a similar function specialized in taking powers of 3 using <code>curried_pow(3)</code>.</p>
+
+<p>Another point that will be relevant once you learn about sequences: Currying is also helpful in contexts where only one-argument functions are allowed, such as with the <code>map</code> function. The <code>map</code> applies a one-argument function to every term in a sequence. If we wanted to take the power of 2 for every number in a sequence using <code>map</code>, we would be forced to use the one-argument function <code>pow_2</code> (as defined in the example above) instead of using <code>pow</code> with 2 as the first argument.</p>
+
+<div class="page-break"></div>
+
+
+<h3 id="q7-curry2-diagram">Q7: Curry2 Diagram</h3>
+
+
+<p>Draw the environment diagram that results from executing the code below.</p>
+
+
+            
+<pre><code class="hljs python"><span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">curry2</span><span class="hljs-params">(h)</span>:</span>
+    <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">f</span><span class="hljs-params">(x)</span>:</span>
+        <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">g</span><span class="hljs-params">(y)</span>:</span>
+            <span class="hljs-keyword">return</span> h(x, y)
+        <span class="hljs-keyword">return</span> g
+    <span class="hljs-keyword">return</span> f
+
+make_adder = curry2(<span class="hljs-keyword">lambda</span> x, y: x + y)
+add_three = make_adder(<span class="hljs-number">3</span>)
+add_four = make_adder(<span class="hljs-number">4</span>)
+five = add_three(<span class="hljs-number">2</span>)</code></pre>
+
+            <b>Your Answer</b>
+            
+<pre><code class="hljs python"><span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">curry2</span><span class="hljs-params">(h)</span>:</span>
+    <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">f</span><span class="hljs-params">(x)</span>:</span>
+        <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">g</span><span class="hljs-params">(y)</span>:</span>
+            <span class="hljs-keyword">return</span> h(x, y)
+        <span class="hljs-keyword">return</span> g
+    <span class="hljs-keyword">return</span> f
+
+make_adder = curry2(<span class="hljs-keyword">lambda</span> x, y: x + y)
+add_three = make_adder(<span class="hljs-number">3</span>)
+add_four = make_adder(<span class="hljs-number">4</span>)
+five = add_three(<span class="hljs-number">2</span>)</code></pre>
+
+        <div class="env-diagram" id="env-diagram-curry2-diagram">
+          <div class="env-diagram-objects">
+            <div>Objects</div>
+            <ul><li>
+            <button class="env-diagram-connector" id="env-diagram-curry2-diagram-object0-connector">▶</button>
+            <input class="env-text-storable" id="env-diagram-curry2-diagram-object0-value" type="text">
+            </li><li>
+            <button class="env-diagram-connector" id="env-diagram-curry2-diagram-object1-connector">▶</button>
+            <input class="env-text-storable" id="env-diagram-curry2-diagram-object1-value" type="text">
+            </li><li>
+            <button class="env-diagram-connector" id="env-diagram-curry2-diagram-object2-connector">▶</button>
+            <input class="env-text-storable" id="env-diagram-curry2-diagram-object2-value" type="text">
+            </li><li>
+            <button class="env-diagram-connector" id="env-diagram-curry2-diagram-object3-connector">▶</button>
+            <input class="env-text-storable" id="env-diagram-curry2-diagram-object3-value" type="text">
+            </li><li>
+            <button class="env-diagram-connector" id="env-diagram-curry2-diagram-object4-connector">▶</button>
+            <input class="env-text-storable" id="env-diagram-curry2-diagram-object4-value" type="text">
+            </li>
+            <li><button class="env-diagram-trash" title="Click here to remove a binding">🗑️</button></li>
+            </ul>
+        </div>
+          <div class="env-diagram-frame">
+                <div>Global frame</div>
+                <table class="table">
+                    <tbody>
+                    
+                <tr>
+                    <td><input type="text" class="env-text-storable" id="env-diagram-curry2-diagram-frame0-binding0-name"></td>
+                    <td><input type="text" class="env-text-storable" id="env-diagram-curry2-diagram-frame0-binding0-value">
+                <button class="env-diagram-connector" id="env-diagram-curry2-diagram-frame0-binding0-connector">⬤
+                </button>
+            </td>
+                </tr>
+            
+                <tr>
+                    <td><input type="text" class="env-text-storable" id="env-diagram-curry2-diagram-frame0-binding1-name"></td>
+                    <td><input type="text" class="env-text-storable" id="env-diagram-curry2-diagram-frame0-binding1-value">
+                <button class="env-diagram-connector" id="env-diagram-curry2-diagram-frame0-binding1-connector">⬤
+                </button>
+            </td>
+                </tr>
+            
+                <tr>
+                    <td><input type="text" class="env-text-storable" id="env-diagram-curry2-diagram-frame0-binding2-name"></td>
+                    <td><input type="text" class="env-text-storable" id="env-diagram-curry2-diagram-frame0-binding2-value">
+                <button class="env-diagram-connector" id="env-diagram-curry2-diagram-frame0-binding2-connector">⬤
+                </button>
+            </td>
+                </tr>
+            
+                <tr>
+                    <td><input type="text" class="env-text-storable" id="env-diagram-curry2-diagram-frame0-binding3-name"></td>
+                    <td><input type="text" class="env-text-storable" id="env-diagram-curry2-diagram-frame0-binding3-value">
+                <button class="env-diagram-connector" id="env-diagram-curry2-diagram-frame0-binding3-connector">⬤
+                </button>
+            </td>
+                </tr>
+            
+                <tr>
+                    <td><input type="text" class="env-text-storable" id="env-diagram-curry2-diagram-frame0-binding4-name"></td>
+                    <td><input type="text" class="env-text-storable" id="env-diagram-curry2-diagram-frame0-binding4-value">
+                <button class="env-diagram-connector" id="env-diagram-curry2-diagram-frame0-binding4-connector">⬤
+                </button>
+            </td>
+                </tr>
+            
+                    
+                    </tbody>
+                </table>
+            </div><div class="env-diagram-frame">
+                
+                <div>
+                f1: <input type="text" class="env-text-storable" id="env-diagram-curry2-diagram-frame1-funcname">
+                [parent=<input type="text" class="env-text-storable" id="env-diagram-curry2-diagram-frame1-parent">]
+                </div>
+            
+                <table class="table">
+                    <tbody>
+                    
+                <tr>
+                    <td><input type="text" class="env-text-storable" id="env-diagram-curry2-diagram-frame1-binding0-name"></td>
+                    <td><input type="text" class="env-text-storable" id="env-diagram-curry2-diagram-frame1-binding0-value">
+                <button class="env-diagram-connector" id="env-diagram-curry2-diagram-frame1-binding0-connector">⬤
+                </button>
+            </td>
+                </tr>
+            
+                <tr>
+                    <td><input type="text" class="env-text-storable" id="env-diagram-curry2-diagram-frame1-binding1-name"></td>
+                    <td><input type="text" class="env-text-storable" id="env-diagram-curry2-diagram-frame1-binding1-value">
+                <button class="env-diagram-connector" id="env-diagram-curry2-diagram-frame1-binding1-connector">⬤
+                </button>
+            </td>
+                </tr>
+            
+                    
+                <tr>
+                    <td>Return value</td>
+                    <td><input type="text" class="env-text-storable" id="env-diagram-curry2-diagram-frame1-return">
+                <button class="env-diagram-connector" id="env-diagram-curry2-diagram-frame1-return-connector">⬤
+                </button>
+            </td>
+                </tr>
+                
+                    </tbody>
+                </table>
+            </div><div class="env-diagram-frame">
+                
+                <div>
+                f2: <input type="text" class="env-text-storable" id="env-diagram-curry2-diagram-frame2-funcname">
+                [parent=<input type="text" class="env-text-storable" id="env-diagram-curry2-diagram-frame2-parent">]
+                </div>
+            
+                <table class="table">
+                    <tbody>
+                    
+                <tr>
+                    <td><input type="text" class="env-text-storable" id="env-diagram-curry2-diagram-frame2-binding0-name"></td>
+                    <td><input type="text" class="env-text-storable" id="env-diagram-curry2-diagram-frame2-binding0-value">
+                <button class="env-diagram-connector" id="env-diagram-curry2-diagram-frame2-binding0-connector">⬤
+                </button>
+            </td>
+                </tr>
+            
+                <tr>
+                    <td><input type="text" class="env-text-storable" id="env-diagram-curry2-diagram-frame2-binding1-name"></td>
+                    <td><input type="text" class="env-text-storable" id="env-diagram-curry2-diagram-frame2-binding1-value">
+                <button class="env-diagram-connector" id="env-diagram-curry2-diagram-frame2-binding1-connector">⬤
+                </button>
+            </td>
+                </tr>
+            
+                    
+                <tr>
+                    <td>Return value</td>
+                    <td><input type="text" class="env-text-storable" id="env-diagram-curry2-diagram-frame2-return">
+                <button class="env-diagram-connector" id="env-diagram-curry2-diagram-frame2-return-connector">⬤
+                </button>
+            </td>
+                </tr>
+                
+                    </tbody>
+                </table>
+            </div><div class="env-diagram-frame">
+                
+                <div>
+                f3: <input type="text" class="env-text-storable" id="env-diagram-curry2-diagram-frame3-funcname">
+                [parent=<input type="text" class="env-text-storable" id="env-diagram-curry2-diagram-frame3-parent">]
+                </div>
+            
+                <table class="table">
+                    <tbody>
+                    
+                <tr>
+                    <td><input type="text" class="env-text-storable" id="env-diagram-curry2-diagram-frame3-binding0-name"></td>
+                    <td><input type="text" class="env-text-storable" id="env-diagram-curry2-diagram-frame3-binding0-value">
+                <button class="env-diagram-connector" id="env-diagram-curry2-diagram-frame3-binding0-connector">⬤
+                </button>
+            </td>
+                </tr>
+            
+                <tr>
+                    <td><input type="text" class="env-text-storable" id="env-diagram-curry2-diagram-frame3-binding1-name"></td>
+                    <td><input type="text" class="env-text-storable" id="env-diagram-curry2-diagram-frame3-binding1-value">
+                <button class="env-diagram-connector" id="env-diagram-curry2-diagram-frame3-binding1-connector">⬤
+                </button>
+            </td>
+                </tr>
+            
+                    
+                <tr>
+                    <td>Return value</td>
+                    <td><input type="text" class="env-text-storable" id="env-diagram-curry2-diagram-frame3-return">
+                <button class="env-diagram-connector" id="env-diagram-curry2-diagram-frame3-return-connector">⬤
+                </button>
+            </td>
+                </tr>
+                
+                    </tbody>
+                </table>
+            </div><div class="env-diagram-frame">
+                
+                <div>
+                f4: <input type="text" class="env-text-storable" id="env-diagram-curry2-diagram-frame4-funcname">
+                [parent=<input type="text" class="env-text-storable" id="env-diagram-curry2-diagram-frame4-parent">]
+                </div>
+            
+                <table class="table">
+                    <tbody>
+                    
+                <tr>
+                    <td><input type="text" class="env-text-storable" id="env-diagram-curry2-diagram-frame4-binding0-name"></td>
+                    <td><input type="text" class="env-text-storable" id="env-diagram-curry2-diagram-frame4-binding0-value">
+                <button class="env-diagram-connector" id="env-diagram-curry2-diagram-frame4-binding0-connector">⬤
+                </button>
+            </td>
+                </tr>
+            
+                <tr>
+                    <td><input type="text" class="env-text-storable" id="env-diagram-curry2-diagram-frame4-binding1-name"></td>
+                    <td><input type="text" class="env-text-storable" id="env-diagram-curry2-diagram-frame4-binding1-value">
+                <button class="env-diagram-connector" id="env-diagram-curry2-diagram-frame4-binding1-connector">⬤
+                </button>
+            </td>
+                </tr>
+            
+                    
+                <tr>
+                    <td>Return value</td>
+                    <td><input type="text" class="env-text-storable" id="env-diagram-curry2-diagram-frame4-return">
+                <button class="env-diagram-connector" id="env-diagram-curry2-diagram-frame4-return-connector">⬤
+                </button>
+            </td>
+                </tr>
+                
+                    </tbody>
+                </table>
+            </div><div class="env-diagram-frame">
+                
+                <div>
+                f5: <input type="text" class="env-text-storable" id="env-diagram-curry2-diagram-frame5-funcname">
+                [parent=<input type="text" class="env-text-storable" id="env-diagram-curry2-diagram-frame5-parent">]
+                </div>
+            
+                <table class="table">
+                    <tbody>
+                    
+                <tr>
+                    <td><input type="text" class="env-text-storable" id="env-diagram-curry2-diagram-frame5-binding0-name"></td>
+                    <td><input type="text" class="env-text-storable" id="env-diagram-curry2-diagram-frame5-binding0-value">
+                <button class="env-diagram-connector" id="env-diagram-curry2-diagram-frame5-binding0-connector">⬤
+                </button>
+            </td>
+                </tr>
+            
+                <tr>
+                    <td><input type="text" class="env-text-storable" id="env-diagram-curry2-diagram-frame5-binding1-name"></td>
+                    <td><input type="text" class="env-text-storable" id="env-diagram-curry2-diagram-frame5-binding1-value">
+                <button class="env-diagram-connector" id="env-diagram-curry2-diagram-frame5-binding1-connector">⬤
+                </button>
+            </td>
+                </tr>
+            
+                    
+                <tr>
+                    <td>Return value</td>
+                    <td><input type="text" class="env-text-storable" id="env-diagram-curry2-diagram-frame5-return">
+                <button class="env-diagram-connector" id="env-diagram-curry2-diagram-frame5-return-connector">⬤
+                </button>
+            </td>
+                </tr>
+                
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="storable-status"></div>
+        
+            <div class="sol-highlight">
+                <b>Solution</b>
+                
+            <iframe width="800" height="994" frameborder="0" src="./Discussion 2 _ CS 61A Fall 2022_files/iframe-embed(5).html">
+            </iframe>
+        
+            </div>
+        
+
+
+
+<div class="page-break"></div>
+
+
+<h1 id="extra-practice">Extra Practice</h1>
+
+
+<p>This question is particuarly challenging, so it is recommended to attempt if you are feeling confident
+on the previous questions or are studying for the exam.</p>
+
+
+<h3 id="q8-match-maker">Q8: Match Maker</h3>
+
+
+<p>Implement <code>match_k</code>, which takes in an integer <code>k</code> and returns a function
+that takes in a variable <code>x</code> and returns <code>True</code> if all the digits in <code>x</code> that
+are <code>k</code> apart are the same.</p>
+
+<p>For example, <code>match_k(2)</code> returns a one argument function that takes in <code>x</code>
+and checks if digits that are 2 away in <code>x</code> are the same.</p>
+
+<p><code>match_k(2)(1010)</code> has the value of <code>x = 1010</code> and digits 1, 0, 1, 0 going
+from left to right. <code>1 == 1</code> and <code>0 == 0</code>, so the <code>match_k(2)(1010)</code> results
+in <code>True</code>.</p>
+
+<p><code>match_k(2)(2010)</code> has the value of <code>x = 2010</code> and digits 2, 0, 1, 0 going
+from left to right. <code>2 != 1</code> and <code>0 == 0</code>, so the <code>match_k(2)(2010)</code> results
+in <code>False</code>.</p>
+
+<p><strong>Important:</strong> You may not use strings or indexing for this problem.
+You do not have to use all the lines, one staff solution does not use the
+line directly above the while loop.</p>
+
+<p><strong>Hint:</strong> Floor dividing by powers of 10 gets rid of the rightmost digits.</p>
+
+
+            
+            <b>Your Answer</b>
+            
+            <div class="monaco-storable" id="match_k-input" style="height:522px;" data-keybinding-context="1" data-mode-id="python"><div class="monaco-editor no-user-select  showUnused vs-dark" data-uri="inmemory://model/3" style="width: 1021px; height: 522px;"><div data-mprt="3" class="overflow-guard" style="width: 1021px; height: 522px;"><div class="margin" role="presentation" aria-hidden="true" style="position: absolute; transform: translate3d(0px, 0px, 0px); contain: strict; top: 0px; height: 532px; width: 64px;"><div class="glyph-margin" style="left: 0px; width: 0px; height: 532px;"></div><div class="margin-view-zones" role="presentation" aria-hidden="true" style="position: absolute;"></div><div class="margin-view-overlays" role="presentation" aria-hidden="true" style="position: absolute; width: 64px; font-family: Consolas, &quot;Courier New&quot;, monospace; font-weight: normal; font-size: 14px; font-feature-settings: &quot;liga&quot; 0, &quot;calt&quot; 0; line-height: 19px; letter-spacing: 0px; height: 532px;"><div style="position:absolute;top:0px;width:100%;height:19px;"><div class="cldr codicon codicon-chevron-down" style="left:38px;width:26px;"></div><div class="line-numbers" style="left:0px;width:38px;">1</div></div><div style="position:absolute;top:19px;width:100%;height:19px;"><div class="line-numbers" style="left:0px;width:38px;">2</div></div><div style="position:absolute;top:38px;width:100%;height:19px;"><div class="line-numbers" style="left:0px;width:38px;">3</div></div><div style="position:absolute;top:57px;width:100%;height:19px;"><div class="line-numbers" style="left:0px;width:38px;">4</div></div><div style="position:absolute;top:76px;width:100%;height:19px;"><div class="line-numbers" style="left:0px;width:38px;">5</div></div><div style="position:absolute;top:95px;width:100%;height:19px;"><div class="line-numbers" style="left:0px;width:38px;">6</div></div><div style="position:absolute;top:114px;width:100%;height:19px;"><div class="line-numbers" style="left:0px;width:38px;">7</div></div><div style="position:absolute;top:133px;width:100%;height:19px;"><div class="line-numbers" style="left:0px;width:38px;">8</div></div><div style="position:absolute;top:152px;width:100%;height:19px;"><div class="line-numbers" style="left:0px;width:38px;">9</div></div><div style="position:absolute;top:171px;width:100%;height:19px;"><div class="line-numbers" style="left:0px;width:38px;">10</div></div><div style="position:absolute;top:190px;width:100%;height:19px;"><div class="line-numbers" style="left:0px;width:38px;">11</div></div><div style="position:absolute;top:209px;width:100%;height:19px;"><div class="line-numbers" style="left:0px;width:38px;">12</div></div><div style="position:absolute;top:228px;width:100%;height:19px;"><div class="line-numbers" style="left:0px;width:38px;">13</div></div><div style="position:absolute;top:247px;width:100%;height:19px;"><div class="line-numbers" style="left:0px;width:38px;">14</div></div><div style="position:absolute;top:266px;width:100%;height:19px;"><div class="line-numbers" style="left:0px;width:38px;">15</div></div><div style="position:absolute;top:285px;width:100%;height:19px;"><div class="line-numbers" style="left:0px;width:38px;">16</div></div><div style="position:absolute;top:304px;width:100%;height:19px;"><div class="line-numbers" style="left:0px;width:38px;">17</div></div><div style="position:absolute;top:323px;width:100%;height:19px;"><div class="line-numbers" style="left:0px;width:38px;">18</div></div><div style="position:absolute;top:342px;width:100%;height:19px;"><div class="cldr codicon codicon-chevron-down" style="left:38px;width:26px;"></div><div class="line-numbers" style="left:0px;width:38px;">19</div></div><div style="position:absolute;top:361px;width:100%;height:19px;"><div class="line-numbers" style="left:0px;width:38px;">20</div></div><div style="position:absolute;top:380px;width:100%;height:19px;"><div class="cldr codicon codicon-chevron-down" style="left:38px;width:26px;"></div><div class="line-numbers" style="left:0px;width:38px;">21</div></div><div style="position:absolute;top:399px;width:100%;height:19px;"><div class="cldr codicon codicon-chevron-down" style="left:38px;width:26px;"></div><div class="line-numbers" style="left:0px;width:38px;">22</div></div><div style="position:absolute;top:418px;width:100%;height:19px;"><div class="line-numbers" style="left:0px;width:38px;">23</div></div><div style="position:absolute;top:437px;width:100%;height:19px;"><div class="line-numbers" style="left:0px;width:38px;">24</div></div><div style="position:absolute;top:456px;width:100%;height:19px;"><div class="line-numbers" style="left:0px;width:38px;">25</div></div><div style="position:absolute;top:475px;width:100%;height:19px;"><div class="line-numbers" style="left:0px;width:38px;">26</div></div><div style="position:absolute;top:494px;width:100%;height:19px;"><div class="line-numbers" style="left:0px;width:38px;">27</div></div><div style="position:absolute;top:513px;width:100%;height:19px;"><div class="line-numbers" style="left:0px;width:38px;">28</div></div></div></div><div class="monaco-scrollable-element editor-scrollable vs-dark" role="presentation" data-mprt="5" style="position: absolute; overflow: hidden; left: 64px; width: 957px; height: 522px;"><div class="lines-content monaco-editor-background" style="position: absolute; overflow: hidden; width: 1e+06px; height: 1e+06px; transform: translate3d(0px, 0px, 0px); contain: strict; top: 0px; left: 0px;"><div class="view-overlays" role="presentation" aria-hidden="true" style="position: absolute; height: 0px; width: 957px;"><div style="position:absolute;top:0px;width:100%;height:19px;"></div><div style="position:absolute;top:19px;width:100%;height:19px;"><div class="cigr" style="left:0px;height:19px;width:30.796875px"></div></div><div style="position:absolute;top:38px;width:100%;height:19px;"><div class="cigr" style="left:0px;height:19px;width:30.796875px"></div></div><div style="position:absolute;top:57px;width:100%;height:19px;"><div class="cigr" style="left:0px;height:19px;width:30.796875px"></div></div><div style="position:absolute;top:76px;width:100%;height:19px;"><div class="cigr" style="left:0px;height:19px;width:30.796875px"></div></div><div style="position:absolute;top:95px;width:100%;height:19px;"><div class="cigr" style="left:0px;height:19px;width:30.796875px"></div></div><div style="position:absolute;top:114px;width:100%;height:19px;"><div class="cigr" style="left:0px;height:19px;width:30.796875px"></div></div><div style="position:absolute;top:133px;width:100%;height:19px;"><div class="cigr" style="left:0px;height:19px;width:30.796875px"></div></div><div style="position:absolute;top:152px;width:100%;height:19px;"><div class="cigr" style="left:0px;height:19px;width:30.796875px"></div></div><div style="position:absolute;top:171px;width:100%;height:19px;"><div class="cigr" style="left:0px;height:19px;width:30.796875px"></div></div><div style="position:absolute;top:190px;width:100%;height:19px;"><div class="cigr" style="left:0px;height:19px;width:30.796875px"></div></div><div style="position:absolute;top:209px;width:100%;height:19px;"><div class="cigr" style="left:0px;height:19px;width:30.796875px"></div></div><div style="position:absolute;top:228px;width:100%;height:19px;"><div class="cigr" style="left:0px;height:19px;width:30.796875px"></div></div><div style="position:absolute;top:247px;width:100%;height:19px;"><div class="cigr" style="left:0px;height:19px;width:30.796875px"></div></div><div style="position:absolute;top:266px;width:100%;height:19px;"><div class="cigr" style="left:0px;height:19px;width:30.796875px"></div></div><div style="position:absolute;top:285px;width:100%;height:19px;"><div class="cigr" style="left:0px;height:19px;width:30.796875px"></div></div><div style="position:absolute;top:304px;width:100%;height:19px;"><div class="cigr" style="left:0px;height:19px;width:30.796875px"></div></div><div style="position:absolute;top:323px;width:100%;height:19px;"><div class="cigr" style="left:0px;height:19px;width:30.796875px"></div></div><div style="position:absolute;top:342px;width:100%;height:19px;"><div class="cigr" style="left:0px;height:19px;width:30.796875px"></div></div><div style="position:absolute;top:361px;width:100%;height:19px;"><div class="cigr" style="left:0px;height:19px;width:30.796875px"></div><div class="cigr" style="left:30.796875px;height:19px;width:30.796875px"></div></div><div style="position:absolute;top:380px;width:100%;height:19px;"><div class="cigr" style="left:0px;height:19px;width:30.796875px"></div><div class="cigr" style="left:30.796875px;height:19px;width:30.796875px"></div></div><div style="position:absolute;top:399px;width:100%;height:19px;"><div class="cigr" style="left:0px;height:19px;width:30.796875px"></div><div class="cigr" style="left:30.796875px;height:19px;width:30.796875px"></div><div class="cigr" style="left:61.59375px;height:19px;width:30.796875px"></div></div><div style="position:absolute;top:418px;width:100%;height:19px;"><div class="cigr" style="left:0px;height:19px;width:30.796875px"></div><div class="cigr" style="left:30.796875px;height:19px;width:30.796875px"></div><div class="cigr" style="left:61.59375px;height:19px;width:30.796875px"></div><div class="cigr" style="left:92.390625px;height:19px;width:30.796875px"></div></div><div style="position:absolute;top:437px;width:100%;height:19px;"><div class="cigr" style="left:0px;height:19px;width:30.796875px"></div><div class="cigr" style="left:30.796875px;height:19px;width:30.796875px"></div><div class="cigr" style="left:61.59375px;height:19px;width:30.796875px"></div></div><div style="position:absolute;top:456px;width:100%;height:19px;"><div class="cigr" style="left:0px;height:19px;width:30.796875px"></div><div class="cigr" style="left:30.796875px;height:19px;width:30.796875px"></div></div><div style="position:absolute;top:475px;width:100%;height:19px;"><div class="cigr" style="left:0px;height:19px;width:30.796875px"></div></div><div style="position:absolute;top:494px;width:100%;height:19px;"></div><div style="position:absolute;top:513px;width:100%;height:19px;"></div></div><div role="presentation" aria-hidden="true" class="view-rulers"></div><div class="view-zones" role="presentation" aria-hidden="true" style="position: absolute;"></div><div class="view-lines" role="presentation" aria-hidden="true" data-mprt="7" style="position: absolute; font-family: Consolas, &quot;Courier New&quot;, monospace; font-weight: normal; font-size: 14px; font-feature-settings: &quot;liga&quot; 0, &quot;calt&quot; 0; line-height: 19px; letter-spacing: 0px; width: 957px; height: 532px;"><div style="top:0px;height:19px;" class="view-line"><span><span class="mtk8">def</span><span class="mtk1">&nbsp;match_k</span><span class="mtk9">(</span><span class="mtk1">k</span><span class="mtk9">):</span></span></div><div style="top:19px;height:19px;" class="view-line"><span><span class="mtk1">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="mtk5">"""&nbsp;Return&nbsp;a&nbsp;function&nbsp;that&nbsp;checks&nbsp;if&nbsp;digits&nbsp;k&nbsp;apar</span><span class="mtk5">t&nbsp;match</span></span></div><div style="top:38px;height:19px;" class="view-line"><span><span>&nbsp;</span></span></div><div style="top:57px;height:19px;" class="view-line"><span><span class="mtk5">&nbsp;&nbsp;&nbsp;&nbsp;&gt;&gt;&gt;&nbsp;match_k(2)(1010)</span></span></div><div style="top:76px;height:19px;" class="view-line"><span><span class="mtk5">&nbsp;&nbsp;&nbsp;&nbsp;True</span></span></div><div style="top:95px;height:19px;" class="view-line"><span><span class="mtk5">&nbsp;&nbsp;&nbsp;&nbsp;&gt;&gt;&gt;&nbsp;match_k(2)(2010)</span></span></div><div style="top:114px;height:19px;" class="view-line"><span><span class="mtk5">&nbsp;&nbsp;&nbsp;&nbsp;False</span></span></div><div style="top:133px;height:19px;" class="view-line"><span><span class="mtk5">&nbsp;&nbsp;&nbsp;&nbsp;&gt;&gt;&gt;&nbsp;match_k(1)(1010)</span></span></div><div style="top:152px;height:19px;" class="view-line"><span><span class="mtk5">&nbsp;&nbsp;&nbsp;&nbsp;False</span></span></div><div style="top:171px;height:19px;" class="view-line"><span><span class="mtk5">&nbsp;&nbsp;&nbsp;&nbsp;&gt;&gt;&gt;&nbsp;match_k(1)(1)</span></span></div><div style="top:190px;height:19px;" class="view-line"><span><span class="mtk5">&nbsp;&nbsp;&nbsp;&nbsp;True</span></span></div><div style="top:209px;height:19px;" class="view-line"><span><span class="mtk5">&nbsp;&nbsp;&nbsp;&nbsp;&gt;&gt;&gt;&nbsp;match_k(1)(2111111111111111)</span></span></div><div style="top:228px;height:19px;" class="view-line"><span><span class="mtk5">&nbsp;&nbsp;&nbsp;&nbsp;False</span></span></div><div style="top:247px;height:19px;" class="view-line"><span><span class="mtk5">&nbsp;&nbsp;&nbsp;&nbsp;&gt;&gt;&gt;&nbsp;match_k(3)(123123)</span></span></div><div style="top:266px;height:19px;" class="view-line"><span><span class="mtk5">&nbsp;&nbsp;&nbsp;&nbsp;True</span></span></div><div style="top:285px;height:19px;" class="view-line"><span><span class="mtk5">&nbsp;&nbsp;&nbsp;&nbsp;&gt;&gt;&gt;&nbsp;match_k(2)(123123)</span></span></div><div style="top:304px;height:19px;" class="view-line"><span><span class="mtk5">&nbsp;&nbsp;&nbsp;&nbsp;False</span></span></div><div style="top:323px;height:19px;" class="view-line"><span><span class="mtk5">&nbsp;&nbsp;&nbsp;&nbsp;"""</span></span></div><div style="top:342px;height:19px;" class="view-line"><span><span class="mtk1">&nbsp;&nbsp;&nbsp;&nbsp;____________________________</span></span></div><div style="top:361px;height:19px;" class="view-line"><span><span class="mtk1">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;____________________________</span></span></div><div style="top:380px;height:19px;" class="view-line"><span><span class="mtk1">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="mtk8">while</span><span class="mtk1">&nbsp;____________________________</span><span class="mtk9">:</span></span></div><div style="top:399px;height:19px;" class="view-line"><span><span class="mtk1">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="mtk8">if</span><span class="mtk1">&nbsp;____________________________</span><span class="mtk9">:</span></span></div><div style="top:418px;height:19px;" class="view-line"><span><span class="mtk1">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="mtk8">return</span><span class="mtk1">&nbsp;____________________________</span></span></div><div style="top:437px;height:19px;" class="view-line"><span><span class="mtk1">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;____________________________</span></span></div><div style="top:456px;height:19px;" class="view-line"><span><span class="mtk1">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;____________________________</span></span></div><div style="top:475px;height:19px;" class="view-line"><span><span class="mtk1">&nbsp;&nbsp;&nbsp;&nbsp;____________________________</span></span></div><div style="top:494px;height:19px;" class="view-line"><span><span>&nbsp;</span></span></div><div style="top:513px;height:19px;" class="view-line"><span><span>&nbsp;</span></span></div></div><div data-mprt="1" class="contentWidgets" style="position: absolute; top: 0px;"></div><div role="presentation" aria-hidden="true" class="cursors-layer cursor-line-style cursor-solid"><div class="cursor " style="height: 19px; top: 0px; left: 0px; font-family: Consolas, &quot;Courier New&quot;, monospace; font-weight: normal; font-size: 14px; font-feature-settings: &quot;liga&quot; 0, &quot;calt&quot; 0; line-height: 19px; letter-spacing: 0px; display: block; visibility: hidden; width: 2px;"></div></div></div><div role="presentation" aria-hidden="true" class="invisible scrollbar horizontal" style="position: absolute; width: 943px; height: 10px; left: 0px; bottom: 0px;"><div class="slider" style="position: absolute; top: 0px; left: 0px; height: 10px; transform: translate3d(0px, 0px, 0px); contain: strict; width: 943px;"></div></div><canvas class="decorationsOverviewRuler" aria-hidden="true" width="21" height="783" style="position: absolute; transform: translate3d(0px, 0px, 0px); contain: strict; top: 0px; right: 0px; width: 14px; height: 522px;"></canvas><div role="presentation" aria-hidden="true" class="invisible scrollbar vertical fade" style="position: absolute; width: 14px; height: 522px; right: 0px; top: 0px;"><div class="slider" style="position: absolute; top: 0px; left: 0px; width: 14px; transform: translate3d(0px, 0px, 0px); contain: strict; height: 512px;"></div></div></div><div role="presentation" aria-hidden="true" style="width: 1021px;"></div><textarea data-mprt="6" class="inputarea" wrap="off" autocorrect="off" autocapitalize="off" autocomplete="off" spellcheck="false" aria-label="Editor content;Press Alt+F1 for Accessibility Options." role="textbox" aria-multiline="true" aria-haspopup="false" aria-autocomplete="both" style="font-family: Consolas, &quot;Courier New&quot;, monospace; font-weight: normal; font-size: 14px; font-feature-settings: &quot;liga&quot; 0, &quot;calt&quot; 0; line-height: 19px; letter-spacing: 0px; top: 0px; left: 64px; width: 1px; height: 1px;"></textarea><div style="position: absolute; top: 0px; left: 0px; width: 0px; height: 0px;"></div><div data-mprt="4" class="overlayWidgets" style="width: 1021px;"><div class="accessibilityHelpWidget" role="dialog" aria-hidden="true" widgetid="editor.contrib.accessibilityHelpWidget" style="display: none; position: absolute;"><div role="document"></div></div><div class="monaco-editor-hover hidden" aria-hidden="true" role="presentation" widgetid="editor.contrib.modesGlyphHoverWidget" style="position: absolute;"></div></div><div data-mprt="8" class="minimap slider-mouseover" role="presentation" aria-hidden="true" style="position: absolute; left: 0px; width: 0px; height: 522px;"><div class="minimap-shadow-hidden" style="height: 522px;"></div><canvas width="0" height="783" style="position: absolute; left: 0px; width: 0px; height: 522px;"></canvas><canvas class="minimap-decorations-layer" width="0" height="783" style="position: absolute; left: 0px; width: 0px; height: 522px;"></canvas><div class="minimap-slider" style="position: absolute; transform: translate3d(0px, 0px, 0px); contain: strict; width: 0px;"><div class="minimap-slider-horizontal" style="position: absolute; width: 0px; height: 0px;"></div></div></div></div><div data-mprt="2" class="overflowingContentWidgets"><div class="monaco-editor rename-box" widgetid="__renameInputWidget" style="background-color: rgb(37, 37, 38); box-shadow: rgb(0, 0, 0) 0px 2px 8px; color: rgb(204, 204, 204); position: absolute; visibility: hidden; max-width: 1707px;"><input class="rename-input" type="text" aria-label="Rename input. Type new name and press Enter to commit." style="font-family: Consolas, &quot;Courier New&quot;, monospace; font-weight: normal; font-size: 14px; background-color: rgb(60, 60, 60); border-width: 0px; border-style: none;"><div class="rename-label" style="font-size: 11.2px;">Enter to Rename, Shift+Enter to Preview</div></div><div class="editor-widget suggest-widget" widgetid="editor.widget.suggestWidget" style="position: absolute; visibility: inherit; max-width: 1707px; top: 22px; left: 64px;" monaco-visible-content-widget="true"><div class="message" aria-hidden="true" style="display: none; background-color: rgb(37, 37, 38); border-color: rgb(69, 69, 69);"></div><div class="tree" aria-hidden="true" style="display: none; background-color: rgb(37, 37, 38); border-color: rgb(69, 69, 69);"><div class="monaco-list list_id_3" tabindex="0" role="tree"><div class="monaco-scrollable-element " role="presentation" style="position: relative; overflow: hidden;"><div class="monaco-list-rows" style="transform: translate3d(0px, 0px, 0px); overflow: hidden;"></div><div role="presentation" aria-hidden="true" class="invisible scrollbar horizontal" style="position: absolute;"><div class="slider" style="position: absolute; top: 0px; left: 0px; height: 10px; transform: translate3d(0px, 0px, 0px); contain: strict;"></div></div><div role="presentation" aria-hidden="true" class="invisible scrollbar vertical" style="position: absolute;"><div class="slider" style="position: absolute; top: 0px; left: 0px; width: 10px; transform: translate3d(0px, 0px, 0px); contain: strict;"></div></div></div><style type="text/css" media="screen">.monaco-list.list_id_3:focus .monaco-list-row.focused { background-color: #062f4a; }
+.monaco-list.list_id_3:focus .monaco-list-row.focused:hover { background-color: #062f4a; }
+.monaco-list.list_id_3:focus .monaco-list-row.selected { background-color: #084066; }
+.monaco-list.list_id_3:focus .monaco-list-row.selected:hover { background-color: #084066; }
+.monaco-list.list_id_3:focus .monaco-list-row.selected { color: #ffffff; }
+
+				.monaco-drag-image,
+				.monaco-list.list_id_3:focus .monaco-list-row.selected.focused { background-color: #094771; }
+			
+
+				.monaco-drag-image,
+				.monaco-list.list_id_3:focus .monaco-list-row.selected.focused { color: #ffffff; }
+			
+.monaco-list.list_id_3 .monaco-list-row.focused { background-color:  #062f4a; }
+.monaco-list.list_id_3 .monaco-list-row.focused:hover { background-color:  #062f4a; }
+.monaco-list.list_id_3 .monaco-list-row.selected { background-color:  #37373d; }
+.monaco-list.list_id_3 .monaco-list-row.selected:hover { background-color:  #37373d; }
+.monaco-list.list_id_3:not(.drop-target) .monaco-list-row:hover:not(.selected):not(.focused) { background-color:  #2a2d2e; }
+
+				.monaco-list.list_id_3.drop-target,
+				.monaco-list.list_id_3 .monaco-list-rows.drop-target,
+				.monaco-list.list_id_3 .monaco-list-row.drop-target { background-color: #062f4a !important; color: inherit !important; }
+			
+.monaco-list-type-filter { background-color: #653723 }
+.monaco-list-type-filter { border: 1px solid rgba(0, 0, 0, 0); }
+.monaco-list-type-filter.no-matches { border: 1px solid #be1100; }
+.monaco-list-type-filter { box-shadow: 1px 1px 1px #000000; }</style></div></div><div class="suggest-status-bar" aria-hidden="true" style="display: none; background-color: rgb(37, 37, 38); border-color: rgb(69, 69, 69);"><span></span><span></span></div><div class="details" aria-hidden="true" style="font-size: 14px; font-weight: normal; font-feature-settings: &quot;liga&quot; 0, &quot;calt&quot; 0; display: none; background-color: rgb(37, 37, 38); border-color: rgb(69, 69, 69);"><div class="monaco-scrollable-element " role="presentation" style="position: relative; overflow: hidden;"><div class="body" style="overflow: hidden;"><div class="header"><span class="codicon codicon-close" title="Read less...Ctrl+Space" style="height: 19px; width: 19px;"></span><p class="type" style="font-family: Consolas, &quot;Courier New&quot;, monospace;"></p></div><p class="docs"></p></div><div role="presentation" aria-hidden="true" class="invisible scrollbar horizontal" style="position: absolute;"><div class="slider" style="position: absolute; top: 0px; left: 0px; height: 10px; transform: translate3d(0px, 0px, 0px); contain: strict;"></div></div><div role="presentation" aria-hidden="true" class="invisible scrollbar vertical" style="position: absolute;"><div class="slider" style="position: absolute; top: 0px; left: 0px; width: 10px; transform: translate3d(0px, 0px, 0px); contain: strict;"></div></div><div class="shadow"></div><div class="shadow"></div><div class="shadow top-left-corner"></div></div></div></div><div class="monaco-editor-hover hidden" tabindex="0" widgetid="editor.contrib.modesContentHoverWidget" style="position: absolute; visibility: hidden; max-width: 1707px;"><div class="monaco-scrollable-element " role="presentation" style="position: relative; overflow: hidden;"><div class="monaco-editor-hover-content" style="overflow: hidden; font-size: 14px; line-height: 19px; max-height: 250px; max-width: 673.86px;"></div><div role="presentation" aria-hidden="true" class="invisible scrollbar horizontal" style="position: absolute;"><div class="slider" style="position: absolute; top: 0px; left: 0px; height: 10px; transform: translate3d(0px, 0px, 0px); contain: strict;"></div></div><div role="presentation" aria-hidden="true" class="invisible scrollbar vertical" style="position: absolute;"><div class="slider" style="position: absolute; top: 0px; left: 0px; width: 10px; transform: translate3d(0px, 0px, 0px); contain: strict;"></div></div><div class="shadow"></div><div class="shadow"></div><div class="shadow top-left-corner"></div></div></div></div><div class="context-view" aria-hidden="true" style="display: none;"></div></div></div>
+            <a href="javascript:void" id="modal-link-match_k-input">Run in 61A Code</a>
+            <div class="modal fade" id="modal-match_k-input" tabindex="-1" role="dialog">
+                <div class="modal-dialog modal-lg" role="document">
+                    <div class="modal-content" style="padding-bottom: -5px">
+                    <iframe id="code-iframe-match_k-input" width="100%" height="700px" style="border: none; display:block;" src="./Discussion 2 _ CS 61A Fall 2022_files/saved_resource(2).html"></iframe>
+                    </div>
+                </div>
+            </div>
+            <div class="storable-status"></div>
+            <script>
+                $(() => activateEditor('def match_k(k):\n    &quot;&quot;&quot; Return a function that checks if digits k apart match\n\n    &gt;&gt;&gt; match_k(2)(1010)\n    True\n    &gt;&gt;&gt; match_k(2)(2010)\n    False\n    &gt;&gt;&gt; match_k(1)(1010)\n    False\n    &gt;&gt;&gt; match_k(1)(1)\n    True\n    &gt;&gt;&gt; match_k(1)(2111111111111111)\n    False\n    &gt;&gt;&gt; match_k(3)(123123)\n    True\n    &gt;&gt;&gt; match_k(2)(123123)\n    False\n    &quot;&quot;&quot;\n    ____________________________\n        ____________________________\n        while ____________________________:\n            if ____________________________:\n                return ____________________________\n            ____________________________\n        ____________________________\n    ____________________________\n\n', "python", "match_k-input"));
+            </script>
+        
+            <div class="sol-highlight">
+                <b>Solution</b>
+                
+<pre><code class="hljs python"><span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">match_k</span><span class="hljs-params">(k)</span>:</span>
+    <span class="hljs-string">""" Return a function that checks if digits k apart match
+
+    &gt;&gt;&gt; match_k(2)(1010)
+    True
+    &gt;&gt;&gt; match_k(2)(2010)
+    False
+    &gt;&gt;&gt; match_k(1)(1010)
+    False
+    &gt;&gt;&gt; match_k(1)(1)
+    True
+    &gt;&gt;&gt; match_k(1)(2111111111111111)
+    False
+    &gt;&gt;&gt; match_k(3)(123123)
+    True
+    &gt;&gt;&gt; match_k(2)(123123)
+    False
+    """</span>
+    <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">check</span><span class="hljs-params">(x)</span>:</span>
+        i = <span class="hljs-number">0</span>
+        <span class="hljs-keyword">while</span> <span class="hljs-number">10</span> ** (i + k) &lt; x:
+            <span class="hljs-keyword">if</span> (x // <span class="hljs-number">10</span>**i) % <span class="hljs-number">10</span> != (x // <span class="hljs-number">10</span> ** (i + k)) % <span class="hljs-number">10</span>:
+                <span class="hljs-keyword">return</span> <span class="hljs-literal">False</span>
+            i = i + <span class="hljs-number">1</span>
+        <span class="hljs-keyword">return</span> <span class="hljs-literal">True</span>
+    <span class="hljs-keyword">return</span> check
+</code></pre>
+
+            </div>
+        
+
+<div class="sol-highlight">
+
+<p>Here's an alternate solution:</p>
+
+<pre><code class="python hljs"><span class="hljs-comment"># BEGIN SOLUTION NO PROMPT</span>
+<span class="hljs-comment"># Alternate solution</span>
+<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">match_k_alt</span><span class="hljs-params">(k)</span>:</span>
+    <span class="hljs-string">""" Return a function that checks if digits k apart match
+
+    &gt;&gt;&gt; match_k_alt(2)(1010)
+    True
+    &gt;&gt;&gt; match_k_alt(2)(2010)
+    False
+    &gt;&gt;&gt; match_k_alt(1)(1010)
+    False
+    &gt;&gt;&gt; match_k_alt(1)(1)
+    True
+    &gt;&gt;&gt; match_k_alt(1)(2111111111111111)
+    False
+    &gt;&gt;&gt; match_k_alt(3)(123123)
+    True
+    &gt;&gt;&gt; match_k_alt(2)(123123)
+    False
+    """</span>
+    <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">check</span><span class="hljs-params">(x)</span>:</span>
+        <span class="hljs-keyword">while</span> x // (<span class="hljs-number">10</span> ** k):
+            <span class="hljs-keyword">if</span> (x % <span class="hljs-number">10</span>) != (x // (<span class="hljs-number">10</span> ** k)) % <span class="hljs-number">10</span>:
+                <span class="hljs-keyword">return</span> <span class="hljs-literal">False</span>
+            x //= <span class="hljs-number">10</span>
+        <span class="hljs-keyword">return</span> <span class="hljs-literal">True</span>
+    <span class="hljs-keyword">return</span> check
+<span class="hljs-comment"># END SOLUTION</span></code></pre>
+
+
+
+</div>
+
+  </div>
+
+  <div class="col-md-3 sticky">
+    <nav class="hidden-print hidden-sm hidden-xs sidebar">
+      <ul class="nav nav-stacked noselect">
+  <li class=""><a href="https://cs61a.org/disc/sol-disc02/#call-expressions">Call Expressions</a></li>
+  <ul class="nav nav-stacked noselect">
+    <li class=""><a href="https://cs61a.org/disc/sol-disc02/#q1-call-diagram">Q1: Call Diagram</a></li>
+    <li class=""><a href="https://cs61a.org/disc/sol-disc02/#q2-nested-calls-diagrams">Q2: Nested Calls Diagrams</a></li>
+  </ul>
+  <li class=""><a href="https://cs61a.org/disc/sol-disc02/#lambda-expressions">Lambda Expressions</a></li>
+  <ul class="nav nav-stacked noselect">
+    <li class=""><a href="https://cs61a.org/disc/sol-disc02/#q3-lambda-the-environment-diagram">Q3: Lambda the Environment Diagram</a></li>
+  </ul>
+  <li class=""><a href="https://cs61a.org/disc/sol-disc02/#higher-order-functions">Higher Order Functions</a></li>
+  <li class=""><a href="https://cs61a.org/disc/sol-disc02/#hofs-in-environment-diagrams">HOFs in Environment Diagrams</a></li>
+  <ul class="nav nav-stacked noselect">
+    <li class="active"><a href="https://cs61a.org/disc/sol-disc02/#q4-make-adder">Q4: Make Adder</a></li>
+    <li class=""><a href="https://cs61a.org/disc/sol-disc02/#q5-make-keeper">Q5: Make Keeper</a></li>
+  </ul>
+  <li class=""><a href="https://cs61a.org/disc/sol-disc02/#hofs-and-lambdas">HOFs and Lambdas</a></li>
+  <ul class="nav nav-stacked noselect">
+    <li class=""><a href="https://cs61a.org/disc/sol-disc02/#q6-make-your-own-lambdas">Q6: Make Your Own Lambdas</a></li>
+  </ul>
+  <li class=""><a href="https://cs61a.org/disc/sol-disc02/#currying">Currying</a></li>
+  <ul class="nav nav-stacked noselect">
+    <li class=""><a href="https://cs61a.org/disc/sol-disc02/#q7-curry2-diagram">Q7: Curry2 Diagram</a></li>
+  </ul>
+  <li class=""><a href="https://cs61a.org/disc/sol-disc02/#extra-practice">Extra Practice</a></li>
+  <ul class="nav nav-stacked noselect">
+    <li class=""><a href="https://cs61a.org/disc/sol-disc02/#q8-match-maker">Q8: Match Maker</a></li>
+  </ul>
+</ul>
+    </nav>
+  </div>
+</div>
+
+    </main>
+
+    <footer class="container">
+      <div class="row text-center">
+        <div class="col col-sm-4">
+          <h3><a href="https://cs61a.org/">CS 61A</a></h3>
+          <ul class="nav nav-pills nav-stacked">
+            <li><a href="https://cs61a.org/weekly">Weekly Schedule</a></li>
+            <li><a href="https://cs61a.org/office-hours">Office Hours</a></li>
+            <li><a href="https://cs61a.org/staff">Staff</a></li>
+          </ul>
+        </div>
+        <div class="col col-sm-4">
+          <h3><a href="https://cs61a.org/resources">Resources</a></h3>
+          <ul class="nav nav-pills nav-stacked">
+            <li><a href="https://cs61a.org/articles/studying">Studying Guide</a></li>
+            <li><a href="https://cs61a.org/articles/debugging">Debugging Guide</a></li>
+            <li><a href="https://cs61a.org/articles/composition">Composition Guide</a></li>
+            <li><a href="https://cs61a.org/articles/pair-programming">Pair Programming</a></li>
+          </ul>
+        </div>
+        <div class="col col-sm-4">
+          <h3><a href="https://cs61a.org/articles/about">Policies</a></h3>
+          <ul class="nav nav-pills nav-stacked">
+            <li><a href="https://cs61a.org/articles/about#assignments">Assignments</a></li>
+            <li><a href="https://cs61a.org/articles/about#exams">Exams</a></li>
+            <li><a href="https://cs61a.org/articles/about#grading">Grading</a></li>
+          </ul>
+        </div>
+      </div>
+    </footer>
+
+    
+
+    <script src="./Discussion 2 _ CS 61A Fall 2022_files/loader.min.js.下载"></script>
+  <link rel="stylesheet" data-name="vs/editor/editor.main" href="./Discussion 2 _ CS 61A Fall 2022_files/editor.main.min.css">
+  <script>
+      require.config({ paths: { 'vs': 'https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.20.0/min/vs' }});
+      window.MonacoEnvironment = { getWorkerUrl: () => URL.createObjectURL(new Blob([`
+      self.MonacoEnvironment = {
+          baseUrl: 'https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.20.0/min'
+      };
+      importScripts('https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.20.0/min/vs/base/worker/workerMain.min.js');
+  `], { type: 'text/javascript' }))
+  };
+  </script>
+    <script src="./Discussion 2 _ CS 61A Fall 2022_files/jsplumb.min.js.下载"></script>
+    <script src="./Discussion 2 _ CS 61A Fall 2022_files/released_assets_js_network_storage.js.下载"></script>
+    <script src="./Discussion 2 _ CS 61A Fall 2022_files/released_assets_js_storable.js.下载"></script>
+    <script src="./Discussion 2 _ CS 61A Fall 2022_files/released_assets_js_editor.js.下载"></script>
+    <script src="./Discussion 2 _ CS 61A Fall 2022_files/released_assets_js_copy-button.js.下载"></script>
+    <script src="./Discussion 2 _ CS 61A Fall 2022_files/released_assets_js_env-diagram.js.下载"></script>
+    
+<script src="./Discussion 2 _ CS 61A Fall 2022_files/released_assets_js_sketchy.js.下载"></script>
+<script>
+  $('.sidebar ul').addClass('nav nav-stacked noselect');
+  $('body').scrollspy({
+    target: '.sidebar',
+    offset: 40
+  });
+
+  function goToId(id) {
+    var target = $(id);
+    target.parent().show();
+    $('html,body').animate({
+      scrollTop: target.offset().top,
+    }, 100);
+    $("body").scrollspy('refresh');
+  }
+
+  if (location.hash) {
+    setTimeout(function() {
+      if (location.hash) {
+        goToId(location.hash);
+      }
+    }, 1);
+  }
+
+  $("a").click(function(event) {
+    var urlBeforeHashRegEx = new RegExp("^"+window.location.href.split("#")[0]);
+    if (/^#/.test(this.hash) && urlBeforeHashRegEx.test(this.href)) {
+      event.preventDefault();
+      goToId(this.hash);
+      document.location.hash = this.hash;
+    }
+  });
+</script>
+
+  
+<div class="monaco-aria-container"><div class="monaco-alert" role="alert" aria-atomic="true"></div><div class="monaco-status" role="status" aria-atomic="true"></div></div><div class="modal-backdrop fade in"></div></body><grammarly-desktop-integration data-grammarly-shadow-root="true"></grammarly-desktop-integration></html>
