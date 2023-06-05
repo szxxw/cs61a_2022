@@ -323,4 +323,28 @@ if f(s.first):
     return Link(f(s.first), filtered_rest)
 else:
     return filtered_rest
+
+   
+def add(s,v):
+    '''
+    add v to an ordered list s with no repeats, returning modified s
+    >>> s = Link(1, Link(3, Link(5)))
+    >>> add(s, 0)
+    Link(0, Link(1, Link(3, Link(5))))
+    >>> add(s, 3)
+    Link(0, Link(1, Link(3, Link(5))))
+    >>> add(s, 4)
+    Link(0, Link(1, Link(3, Link(4, Link(5)))))
+    >>> add(s, 6)
+    Link(0, Link(1, Link(3, Link(4, Link(5, Link(6))
+    '''
+
+    assert s is not List.empty
+    if s.first > v:
+        s.first, s.rest = v, Link(s.first, s.rest)
+    elif s.first < v and s.rest is Link.empty:
+        s.rest = Link(v)
+    else:
+        add(s.rest, v)
+    return s
    
