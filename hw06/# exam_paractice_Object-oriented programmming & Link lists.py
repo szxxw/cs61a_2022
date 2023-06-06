@@ -348,3 +348,68 @@ def add(s,v):
         add(s.rest, v)
     return s
    
+# review of trees
+
+def fib_tree(n):
+    if n == 0 or n == 1:
+        return Tree(n)
+    else:
+        left = fib(n-2)
+        right = fib(n-1)
+        fib_n = left.label + right.label
+        return Tree(fib_n, [left, right])
+    
+def leaves(tree):
+    if tree.is_leave():
+        return [tree.label]
+    else:
+        all_leaves = []
+        return sum([leaves(b) for b in tree.branches], [])
+def height_tree(tree):
+    if tree.is_leave():
+        return 1
+    else:
+        return 1 + max([ height_tree(b) for b in tree.branches])
+    
+
+# pruning trees
+
+def prune(t, n):
+    '''
+    prune all sub_trees whose label is n.
+    '''
+    t.branches = [ b for b in t.branches if b.label != n]
+    for b in t.branches:
+        prune(b, n)
+
+
+# fa18-mt2 06 Dr.Frankenlink
+
+def replace(s, t, i, j):
+    """Replace the slice of s from i to j with t.
+    >>> s, t = Link(3, Link(4, Link(5, Link(6, Link(7))))), Link(0, Link(1, Link(2)))
+    >>> replace(s, t, 2, 4)
+    >>> print(s)
+    <3 4 0 1 2 7>
+    >>> t.rest.first = 8
+    >>> print(s)
+    <3 4 0 8 2 7>
+    """
+    assert s is not Link.empty and t is not Link.empty and i > 0 and i < j
+    if i > 1:
+        replace(s.rest, t, i - 1, j - 1)
+
+    else:
+        for k in range(j - i):
+            s.rest = s.rest.rest # delete k elements ifrom i to j
+            #print(s)
+        end = t
+        while end.rest is not Link.empty:
+            # to get the last element of end
+            end = end.rest
+            #print(end) 
+        # end.rest = s.rest: Since end is the last element of t, this sets the rest of t to be what was originally after the slice in s. 
+        # This effectively stitches the remaining elements of s onto the end of t, maintaining the elements of s that were after the replaced slice.
+        s.rest, end.rest = t, s.rest
+
+
