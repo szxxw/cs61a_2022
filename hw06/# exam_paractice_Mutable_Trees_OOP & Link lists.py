@@ -586,3 +586,36 @@ def get_words(trie):
     if is_leaf(trie):
         return [trie.label]
     return sum( [[trie.label + word for word in get_words(b)] for b in trie.branches] , [])
+
+
+# sp18 mt2 Trees
+
+
+def siblings(t):
+    """Return a list of the labels of all nodes that have siblings in t.
+    >>> a = Tree(4, [Tree(5), Tree(6), Tree(7, [Tree(8)])])
+    >>> siblings(Tree(1, [Tree(3, [a]), Tree(9, [Tree(10)])]))
+    [3, 9, 5, 6, 7]
+    """
+    result = [b.label for b in t.branches if len(t.branches) > 1]
+    for b in t.branches:
+            result.extend(siblings(b))
+    return result
+
+class Sib(Tree):
+    """A tree that knows how many siblings it has.
+    >>> a = Sib(4, [Sib(5), Sib(6), Sib(7, [Sib(8)])])
+    >>> a.label
+    4
+    >>> a.branches[1].label
+    6
+    >>> a.siblings
+    0
+    >>> a.branches[1].siblings
+    2
+    """
+    def __init__(self, label, branches=[]):
+        self.siblings = 0
+        for b in branches:
+            b.siblings += len(branches) - 1
+        Tree.__init__(self, label, branches)
