@@ -504,4 +504,53 @@ def is_minimal(state_codes, k):
     in_favor_no_smallest = sum(votes_in_favor)- min(votes_in_favor)
     # (c)
     return win_margin(in_favor_no_smallest) < k
+# fa61- final 03 Caladan
+
+def fruited_branch(t):
+    """Return whether Tree t has exactly one child that is a fruit (a leaf with no siblings).
+    >>> fruited_branch(Tree(4))
+    False
+    >>> fruited_branch(Tree(4, [Tree(5)]))
+    True
+    >>> fruited_branch(Tree(4, [Tree(5, [Tree(6)])]))
+    False
+    """
+    return len(t.branches) == 1 and t.branches[0].is_leaf()
+
+def sum_fruit_labels(t):
+    """Return the sum of the labels of the fruits of Tree t.
+    >>> apple = Tree(5, [Tree(6, [Tree(7)]), Tree(8), Tree(9, [Tree(10)])])
+    >>> sum_fruit_labels(apple) # 7 + 10
+    17
+    >>> pineapple = Tree(3, [Tree(4), apple, apple, Tree(1, [Tree(2)])])
+    >>> sum_fruit_labels(pineapple) # 7 + 10 + 7 + 10 + 2
+    36
+    >>> sum_fruit_labels(Tree(3, [Tree(4), Tree(5)])) # No fruits!
+    0
+    """
+    if fruited_branch(t):
+        return t.branches[0].label
+    else:
+        return sum([sum_fruit_labels(b) for b in t.branches])
+    
+
+
+def pruned(t):
+    """Return a Tree with only the nodes of t that are on a path to a fruit.
+    >>> t = Tree(5, [Tree(6, [Tree(7)]), Tree(8), Tree(9, [Tree(10)])])
+    >>> pruned(t)
+    Tree(5, [Tree(6, [Tree(7)]), Tree(9, [Tree(10)])])
+    >>> t # t is not modified by calling pruned(t)
+    Tree(5, [Tree(6, [Tree(7)]), Tree(8), Tree(9, [Tree(10)])])
+    >>> pruned(Tree(2, [Tree(3), Tree(4)])) is None # No fruit!
+    True
+    """
+    if fruited_branch(t):
+        return t
+    cut = [pruned(b) for b in t.branches] # Some items in cut might be None
+    if any(cut):
+        return  Tree(t.label,[i for i in cut if i])
+    
+# sp19 mt2 06 Tries this
+  
 
