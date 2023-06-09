@@ -1,6 +1,6 @@
 # Object-oriented programmming
 
-# 1 spring 2022 MT2 Q8 cs61a presents the game of hoop
+# 1 spring 2022 MT2 Q8 presents the game of hoop
 class HoopPlayer:
     def __init__(self, strategy):
         """Initialize a player with STRATEGY, and a starting SCORE of 0. The
