@@ -310,7 +310,7 @@ def replace(s, t, i, j):
         s.rest, end.rest = t, s.rest
 
 
-# spring 2017 mt1 q5 insert
+
 if s is Link.empty:
     return Link.empty
 else:
