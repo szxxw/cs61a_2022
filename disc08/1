@@ -1,1 +1,61 @@
+# Q3 Sum Nums
+def sum_nums(s):
+    """
+    >>> a = Link(1, Link(6, Link(7)))
+    >>> sum_nums(a)
+    14
+    """
+    "*** YOUR CODE HERE ***"
+    if s.rest is Link.empty:
+        return s.first
+    else:
+        return s.first + sum_nums(s.rest)
+        
+# Q4 Multiply Links
+def multiply_lnks(lst_of_lnks):
+    """
+    >>> a = Link(2, Link(3, Link(5)))
+    >>> b = Link(6, Link(4, Link(2)))
+    >>> c = Link(4, Link(1, Link(0, Link(2))))
+    >>> p = multiply_lnks([a, b, c])
+    >>> p.first
+    48
+    >>> p.rest.first
+    12
+    >>> p.rest.rest.rest is Link.empty
+    True
+    """
+    # Implementation Note: you might not need all lines in this skeleton code
+    result = 1
+    for i in lst_of_lnks:
+        if i is Link.empty:
+            return Link.empty
+        result *= i.first
+    lst_of_lnks_rests = [i.rest for i in lst_of_lnks]
+    return Link(result, multiply_lnks(lst_of_lnks_rests))
+    
+    
+# Q5 Flip Two
 
+def flip_two(s):
+    """
+    >>> one_lnk = Link(1)
+    >>> flip_two(one_lnk)
+    >>> one_lnk
+    Link(1)
+    >>> lnk = Link(1, Link(2, Link(3, Link(4, Link(5)))))
+    >>> flip_two(lnk)
+    >>> lnk
+    Link(2, Link(1, Link(4, Link(3, Link(5)))))
+    """
+    "*** YOUR CODE HERE ***"
+    if s.rest is Link.empty or s is Link.empty:
+        return 
+    else:
+        s.first, s.rest.first = s.rest.first, s.first
+        flip_two(s.rest.rest)
+    # For an extra challenge, try writing out an iterative approach as well below!
+    "*** YOUR CODE HERE ***"
+    while s.rest is not Link.empty and s is not Link.empty:
+        s.first, s.rest.first = s.rest.first, s.first
+        s = s.rest.rest
