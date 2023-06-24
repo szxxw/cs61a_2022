@@ -1,0 +1,52 @@
+def smallest_absolute_val(lst):
+    '''
+    >>>smallest_absolute_val[-4,-3, -2, 3, 2, 4]
+    [2, 4]
+    '''
+    indi = []
+    min_abs = min([abs(i) for i in lst])
+    for i in range(0, len(lst)):
+        if abs(lst[i]) == min_abs:
+            indi.append(i)
+    return indi
+    
+def largest_adj_sum(s):
+    '''
+    >>> largest_adj_sum([-4, -3, -2, 3, 2, 4])
+    6
+    >>> largest_adj_sum([-4, 3, -2, -3, 2, -4])
+    1
+    '''
+    sum = s[0] + s[1]
+    for i in range(1, len(s) - 1):
+        now = s[i] + s[i + 1]
+        if sum < now:
+            sum = now
+    return sum
+    
+def digit_dict(s):
+    '''
+    >>> digit_dict([5,8,13,21,34,55,89])
+    {1: [21], 3: [13], 4: [34], 5: [5, 55], 8: [8], 9: [89]}
+    '''
+    my_dict = {}
+    for i in s:
+        if i%10 not in my_dict:
+            my_dict[i%10] = [i]
+        else:
+            my_dict[i%10] += [i]
+    return dict(sorted(my_dict.items()))
+    
+def all_have_an_equal(s):
+    '''
+    >>> all_have_an_equal([-4, -3, -2, 3, 2, 4])
+    False
+    >>> all_have_an_equal([4, 3, 2, 3, 2, 4])
+    True
+    '''
+    if s[0] in s[1:]:
+        return True
+    for i in range(1, len(s) - 1):
+        if s[i] in s[i+1:]:
+            return True
+    return False
