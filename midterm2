@@ -185,6 +185,22 @@ def tree_to_graph(tree):
     helper(tree, lambda: next(b), any(lambda a, b: [g.add_edge(a, i) for i in b]) )
     return g
 
-
+A+ question explanation: There are three parts to this question:
+# • Determining the number of nodes in the tree (blank a and b)
+# • Creating a graph with the given number of nodes (blank c)
+# • Adding the appropriate edges to the graph (blank d and e)
+# Step 2 can be done fairly easily by calling Graph(numnodes)
+# For Steps 1 and 3, the tricky part is that the requested behavior must be
+# achieved solely through the two lambda function inputs of the helper.
+# Step 1 can be done by using op1 as a lambda that returns 1 and op2 as a
+# function to add the results of all branches
+# Step 3 is trickier, but can be done if we make op1 return the ID of the
+# graph node corresponding to the current tree node. As it turns out, the
+# pre-order definition perfectly matches assigning IDs in numeric order (using
+# the traversal order given in the helper function), so we can use the iterator
+# b to perform this. op2 is then set to run add_edge for each element of the
+# branches, and return a falsey value so that we output a. Note that the
+# solution provides must use any instead of all, in order to return False on
+# leaves.
 
 
