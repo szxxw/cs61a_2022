@@ -52,3 +52,30 @@ def non_decrease_subseqs(s):
             b = subseq_helper(s[1:], prev)
             return insert_into_all(s[0], a) + b
     return subseq_helper(s,0)
+
+
+def num_trees(n):
+    """Returns the number of unique full binary trees with exactly n leaves. E.g.,
+
+    1   2        3       3    ...
+    *   *        *       *
+       / \      / \     / \
+      *   *    *   *   *   *
+              / \         / \
+             *   *       *   *
+
+    >>> num_trees(1)
+    1
+    >>> num_trees(2)
+    1
+    >>> num_trees(3)
+    2
+    >>> num_trees(8)
+    429
+
+    """
+    "*** YOUR CODE HERE ***"
+    if n == 1:
+        return 1
+    else:
+        return sum(num_trees(i) * num_trees(n-i) for i in range(1, n))
