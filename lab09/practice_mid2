@@ -79,3 +79,90 @@ def num_trees(n):
         return 1
     else:
         return sum(num_trees(i) * num_trees(n-i) for i in range(1, n))
+def partition_gen(n):
+    """
+    >>> for partition in partition_gen(4): # note: order doesn't matter
+    ...     print(partition)
+    [4]
+    [3, 1]
+    [2, 2]
+    [2, 1, 1]
+    [1, 1, 1, 1]
+    """
+    def yield_helper(j, k):
+        if j == 0:
+            yield []
+        elif k > 0 and j > 0:
+            for small_part in yield_helper(j-k, k):
+                yield [k] + small_part
+            yield from yield_helper(j, k - 1)
+    yield from yield_helper(n, n)
+
+
+class VendingMachine:
+    """A vending machine that vends some product for some price.
+
+    >>> v = VendingMachine('candy', 10)
+    >>> v.vend()
+    'Nothing left to vend. Please restock.'
+    >>> v.add_funds(15)
+    'Nothing left to vend. Please restock. Here is your $15.'
+    >>> v.restock(2)
+    'Current candy stock: 2'
+    >>> v.vend()
+    'Please update your balance with $10 more funds.'
+    >>> v.add_funds(7)
+    'Current balance: $7'
+    >>> v.vend()
+    'Please update your balance with $3 more funds.'
+    >>> v.add_funds(5)
+    'Current balance: $12'
+    >>> v.vend()
+    'Here is your candy and $2 change.'
+    >>> v.add_funds(10)
+    'Current balance: $10'
+    >>> v.vend()
+    'Here is your candy.'
+    >>> v.add_funds(15)
+    'Nothing left to vend. Please restock. Here is your $15.'
+
+    >>> w = VendingMachine('soda', 2)
+    >>> w.restock(3)
+    'Current soda stock: 3'
+    >>> w.restock(3)
+    'Current soda stock: 6'
+    >>> w.add_funds(2)
+    'Current balance: $2'
+    >>> w.vend()
+    'Here is your soda.'
+    """
+    "*** YOUR CODE HERE ***"
+    def __init__(self, name, price):
+        self.name = name
+        self.price = price
+        self.stock = 0
+        self.funds = 0
+    def vend(self):
+        if self.stock == 0:
+            return 'Nothing left to vend. Please restock.'
+        diff = self.funds - self.price
+        if diff < 0:
+            return f"Please update your balance with ${-diff} more funds."
+        else:
+            self.stock -= 1
+            self.funds = 0
+            if diff == 0:
+                return f'Here is your {self.name}.'
+            else:
+                return f'Here is your {self.name} and ${diff} change.'
+            
+    def add_funds(self, funds):
+        self.funds += funds
+        if self.stock == 0:
+            self.funds = 0 
+            return f'Nothing left to vend. Please restock. Here is your ${funds}.'
+        else:
+            return f'Current balance: ${self.funds}'
+    def restock(self, restock):
+        self.stock += restock
+        return f'Current {self.name} stock: {self.stock}'
