@@ -319,3 +319,101 @@ def make_to_string(front, mid, back, empty_repr):
         else:
             return front + str(lnk.first) + mid + printer(lnk.rest) + back
     return printer
+def long_paths(t, n):
+    """Return a list of all paths in t with length at least n.
+
+    >>> long_paths(Tree(1), 0)
+    [[1]]
+    >>> long_paths(Tree(1), 1)
+    []
+    >>> t = Tree(3, [Tree(4), Tree(4), Tree(5)])
+    >>> left = Tree(1, [Tree(2), t])
+    >>> mid = Tree(6, [Tree(7, [Tree(8)]), Tree(9)])
+    >>> right = Tree(11, [Tree(12, [Tree(13, [Tree(14)])])])
+    >>> whole = Tree(0, [left, Tree(13), mid, right])
+    >>> print(whole)
+    0
+      1
+        2
+        3
+          4
+          4
+          5
+      13
+      6
+        7
+          8
+        9
+      11
+        12
+          13
+            14
+    >>> for path in long_paths(whole, 2):
+    ...     print(path)
+    ...
+    [0, 1, 2]
+    [0, 1, 3, 4]
+    [0, 1, 3, 4]
+    [0, 1, 3, 5]
+    [0, 6, 7, 8]
+    [0, 6, 9]
+    [0, 11, 12, 13, 14]
+    >>> for path in long_paths(whole, 3):
+    ...     print(path)
+    ...
+    [0, 1, 3, 4]
+    [0, 1, 3, 4]
+    [0, 1, 3, 5]
+    [0, 6, 7, 8]
+    [0, 11, 12, 13, 14]
+    >>> long_paths(whole, 4)
+    [[0, 11, 12, 13, 14]]
+    """
+    "*** YOUR CODE HERE ***"
+    if t.is_leaf() and n <= 0:
+        return [[t.label]]
+    if t.is_leaf() and n > 0:
+        return []
+    paths = []
+    for b in t.branches:
+        for  path in long_paths(b, n-1):
+            paths.append([t.label]+ path)
+    return paths
+
+def reverse_other(t):
+    """Mutates the tree such that nodes on every other (odd-depth)
+    level have the labels of their branches all reversed.
+
+    >>> t = Tree(1, [Tree(2), Tree(3), Tree(4)])
+    >>> reverse_other(t)
+    >>> t
+    Tree(1, [Tree(4), Tree(3), Tree(2)])
+    >>> t = Tree(1, [Tree(2, [Tree(3, [Tree(4), Tree(5)]), Tree(6, [Tree(7)])]), Tree(8)])
+    >>> reverse_other(t)
+    >>> t
+    Tree(1, [Tree(8, [Tree(3, [Tree(5), Tree(4)]), Tree(6, [Tree(7)])]), Tree(2)])
+    """
+    "*** YOUR CODE HERE ***"
+    # def counter_deepth(t, k):
+    #     k += 1
+    #     if t.is_leaf():
+    #         return 
+    #     new_labs = [ i.label for i in t.branches][::-1]
+    #     if k % 2 == 1:
+    #         for x in range(len(t.branches)):
+    #             t.branches[x].label = new_labs[x]
+    #     for i in t.branches:
+    #         counter_deepth(i, k)
+    # return counter_deepth(t, 0)
+    
+
+    def counter_deepth(t, need_reverse):
+        if t.is_leaf():
+            return 
+        new_labs = [ i.label for i in t.branches][::-1]
+        for x in range(len(t.branches)):
+            child = t.branches[x]
+            counter_deepth(child, not need_reverse)
+            if need_reverse:
+                child.label = new_labs[x]
+    return counter_deepth(t, True)
