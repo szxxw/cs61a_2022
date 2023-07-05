@@ -417,3 +417,41 @@ def reverse_other(t):
             if need_reverse:
                 child.label = new_labs[x]
     return counter_deepth(t, True)
+def count_partitions(n, m):
+    """Counts the number of partitions of a positive integer n, 
+    using parts up to size m."""
+    if n == 0:
+        return 1
+    elif n < 0:
+        return 0
+    elif m == 0:
+        return 0
+    else:
+        with_m = count_partitions(n-m, m)
+        without_m = count_partitions(n, m-1)
+        return with_m + without_m
+
+# exponential
+
+def is_palindrome(s):
+    """Return whether a list of numbers s is a palindrome."""
+    return all([s[i] == s[len(s) - i - 1] for i in range(len(s))])
+
+# Linear
+
+def binary_search(lst, n):
+    """Takes in a sorted list lst and returns the index where integer n
+    is contained in lst. Returns -1 if n does not exist in lst."""
+    low = 0
+    high = len(lst)
+    while low <= high:
+        middle = (low + high) // 2
+        if lst[middle] == n:
+            return middle
+        elif n < lst[middle]:
+            high = middle - 1
+        else:
+            low = middle + 1
+    return -1
+
+# Logarithmic
