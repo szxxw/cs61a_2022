@@ -276,3 +276,46 @@ def insert(link, value, index):
         raise IndexError('Out of bounds!')
     else:
         insert(link.rest, value, index - 1)
+def deep_len(lnk):
+    """ Returns the deep length of a possibly deep linked list.
+
+    >>> deep_len(Link(1, Link(2, Link(3))))
+    3
+    >>> deep_len(Link(Link(1, Link(2)), Link(3, Link(4))))
+    4
+    >>> levels = Link(Link(Link(1, Link(2)), \
+            Link(3)), Link(Link(4), Link(5)))
+    >>> print(levels)
+    <<<1 2> 3> <4> 5>
+    >>> deep_len(levels)
+    5
+    """
+    if lnk is Link.empty:
+        return 0
+    elif isinstance(lnk, int):
+        return 1
+    else:
+        return deep_len(lnk.first) + deep_len(lnk.rest)
+
+
+def make_to_string(front, mid, back, empty_repr):
+    """ Returns a function that turns linked lists to strings.
+
+    >>> kevins_to_string = make_to_string("[", "|-]-->", "", "[]")
+    >>> jerrys_to_string = make_to_string("(", " . ", ")", "()")
+    >>> lst = Link(1, Link(2, Link(3, Link(4))))
+    >>> kevins_to_string(lst)
+    '[1|-]-->[2|-]-->[3|-]-->[4|-]-->[]'
+    >>> kevins_to_string(Link.empty)
+    '[]'
+    >>> jerrys_to_string(lst)
+    '(1 . (2 . (3 . (4 . ()))))'
+    >>> jerrys_to_string(Link.empty)
+    '()'
+    """
+    def printer(lnk):
+        if lnk is Link.empty:
+            return empty_repr
+        else:
+            return front + str(lnk.first) + mid + printer(lnk.rest) + back
+    return printer
